@@ -10,15 +10,16 @@ let frames = 0;
 const state = {
   current: 0,
   start: 0,
-  game: 1,
-  over: 2,
-  startLevelTwo: 3,
+  gameLevelOne: 1,
+  startLevelTwo: 2,
+  gameLevelTwo: 3,
+  over: 4,
 };
 
 
 canvas.onclick = function (e) {
   switch (state.current) {
-    case state.start: state.current = state.game;
+    case state.start: state.current = state.gameLevelOne;
       break;
     case state.over: 
     score.currentScore = 0;
@@ -27,8 +28,8 @@ canvas.onclick = function (e) {
     state.current = state.start;
       break;
       case state.startLevelTwo: 
-      score.currentScore = score.levelTwoScore;
-      state.current = state.game;
+      score.current = score.beginLevelTwo;
+      state.current = state.gameLevelTwo;
       mainCharacter.reset();
       obstacle.reset();
         break;
@@ -64,16 +65,18 @@ levelUpImg.src = "./img/levelUp.png";
 // Score
 
 const score = {
-  currentScore: 0,
-  levelTwoScore: 20,
-  
+  current: 0,
+  endLevelOne: 6,
+  beginLevelTwo: 20,
+  endLevelTwo: 26,
+
   update(){
     // update the score board in DOM
     let scoreboard = document.getElementById('userScore');
-    scoreboard.innerHTML = this.currentScore;
+    scoreboard.innerHTML = this.current;
 
-    //change to Level 2 start screen when players reached certain amount of scores
-    if(this.currentScore === 10){
+    //change to Level 2 start screen 
+    if(obstacle.position.length === 0 && this.current >= this.endLevelOne && this.current < this.beginLevelTwo){
       state.current = state.startLevelTwo;
 
   }
@@ -98,7 +101,7 @@ const background = {
   },
 
   update() {
-    if (state.current === state.game) {
+    if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo) {
 
       ctx.drawImage(backgroundImg, this.x--, 0, this.w, this.h);
       ctx.drawImage(backgroundImg, this.x2--, 0, this.w, this.h);
@@ -133,7 +136,7 @@ const mainCharacter = {
       this.y = 150;
     }
 
-    if (state.current == state.game) {
+    if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo) {
       this.speed += this.gravity;
       this.y += this.speed;
       if (this.y + 50 >= canvas.height) {
@@ -165,7 +168,7 @@ const obstacle = {
   gap: 100,
   maxYPos: -80,
   dx: 2,
-  dxLevelTwo: 3,
+  dxLevelTwo: 3.5,
   speed: 0,
   accelerator: 0.25,
 
@@ -183,23 +186,27 @@ const obstacle = {
   },
 
   update() {
-    if (state.current !== state.game) return;
     // level 1
-    if (frames % 100 == 0 && score.currentScore < 6) {
-      this.position.push({
-        x: canvas.width,
-        y: this.maxYPos * (Math.random() + 1.5)
-      });
+    if(state.current === state.gameLevelOne){
+      if (frames % 100 == 0 && score.current < score.endLevelOne) {
+        this.position.push({
+          x: canvas.width,
+          y: this.maxYPos * (Math.random() + 1.5)
+        });
+    }
     }
 
+
     // level 2
-      if (frames % 100 == 0 && score.currentScore >= 20 && score.currentScore < 26) {
+    if(state.current === state.gameLevelTwo){
+      if (frames % 50 == 0 && score.current >= score.endLevelOne && score.current < score.endLevelTwo) {
         this.position.push({
           x: canvas.width,
           y: this.maxYPos * (Math.random() + 1.5)
         });
       
     };
+    }
 
    
     for (let i = 0; i < this.position.length; i++) {
@@ -207,13 +214,15 @@ const obstacle = {
       
       //move obstacles to the left
         //level 1
-      p.x -= this.dx;
-
+        if(state.current === state.gameLevelOne){
+          p.x -= this.dx;
+        }
+    
         //level 2
+        if(state.current === state.gameLevelTwo){
+          p.x -= this.dxLevelTwo;
+        }
      
-  
-      
-      
       
       // collision detection
       let bottomYP = p.y + this.h + this.gap;
@@ -249,7 +258,7 @@ const obstacle = {
 // increase the score
       if (p.x + this.w <= 0) {
         this.position.shift();
-        score.currentScore += 1;
+        score.current += 1;
       };
 
     };
@@ -295,7 +304,7 @@ const levelTwoStartScreen = {
   y: 150,
 
   draw(){
-    if(state.current === state.startLevelTwo && score.currentScore === 10){
+    if(state.current === state.startLevelTwo){
       ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
     
     }
@@ -337,12 +346,12 @@ window.onload = function () {
   loop();
   document.onkeydown = function (e) {
     if (e.keyCode === 38) {
-      if (state.current == state.game) {
+      if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo) {
         mainCharacter.moveUp();
       }
     }
     if (e.keyCode === 40) {
-      if (state.current == state.game) {
+      if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo) {
         mainCharacter.moveDown();
       }
     }
