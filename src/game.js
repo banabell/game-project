@@ -26,13 +26,12 @@ canvas.onclick = function (e) {
     obstacle.reset();
     state.current = state.start;
       break;
-    case state.startLevelTwo: 
-    score.currentScore = score.currentScore + 10
-    state.current = state.game;
-    mainCharacter.reset();
-    obstacle.reset();
-      break;
-
+      case state.startLevelTwo: 
+      score.currentScore = score.levelTwoScore;
+      state.current = state.game;
+      mainCharacter.reset();
+      obstacle.reset();
+        break;
   }
 };
 
@@ -66,21 +65,20 @@ levelUpImg.src = "./img/levelUp.png";
 
 const score = {
   currentScore: 0,
-  scoreToReachLevelTwo: 5,
-  startScoreLevelTwo: 15,
-
-
+  levelTwoScore: 20,
+  
   update(){
     // update the score board in DOM
     let scoreboard = document.getElementById('userScore');
     scoreboard.innerHTML = this.currentScore;
 
     //change to Level 2 start screen when players reached certain amount of scores
-    if(this.currentScore === this.scoreToReachLevelTwo){
+    if(this.currentScore === 10){
       state.current = state.startLevelTwo;
-    }
+
   }
-}
+},
+};
 
 // Background
 const background = {
@@ -186,12 +184,21 @@ const obstacle = {
 
   update() {
     if (state.current !== state.game) return;
-    if (frames % 100 == 0) {
-      // different positions for top obstacle
+    // level 1
+    if (frames % 100 == 0 && score.currentScore < 6) {
       this.position.push({
         x: canvas.width,
         y: this.maxYPos * (Math.random() + 1.5)
       });
+    }
+
+    // level 2
+      if (frames % 100 == 0 && score.currentScore >= 20 && score.currentScore < 26) {
+        this.position.push({
+          x: canvas.width,
+          y: this.maxYPos * (Math.random() + 1.5)
+        });
+      
     };
 
    
@@ -199,7 +206,10 @@ const obstacle = {
       let p = this.position[i];
       
       //move obstacles to the left
+        //level 1
       p.x -= this.dx;
+
+        //level 2
      
   
       
@@ -242,8 +252,9 @@ const obstacle = {
         score.currentScore += 1;
       };
 
-    }
+    };
   },
+  
   
   reset(){
     this.position = [];
@@ -284,12 +295,13 @@ const levelTwoStartScreen = {
   y: 150,
 
   draw(){
-    if(state.current === state.startLevelTwo){
+    if(state.current === state.startLevelTwo && score.currentScore === 10){
       ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
     
     }
   }
-}
+};
+
 
 // Draw
 function draw() {
