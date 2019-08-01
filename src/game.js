@@ -1,12 +1,12 @@
 
-// Get canvas
+// CANVAS
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// Variables
+// VARIABLES
 let frames = 0;
 
-// Game state 
+// GAME STATE
 const state = {
   current: 0,
   start: 0,
@@ -19,7 +19,7 @@ const state = {
   over: 7,
 };
 
-
+// ONCLICK EVENT ON CANVAS
 canvas.onclick = function (e) {
   switch (state.current) {
     case state.start: state.current = state.gameLevelOne;
@@ -53,35 +53,35 @@ canvas.onclick = function (e) {
 
 
 
-// Load the background image
+// LOAD BACKGROUND IMAGE
 const backgroundImg = new Image();
 backgroundImg.src = "./img/testbackground.png";
 
-// Load the main character
+// LOAD MAIN CHARACTER
 const mainCharacterImg = new Image();
 mainCharacterImg.src = "./img/ghost.png";
 
-// Load start button
+// LOAD START BUTTON
 const startButtonImg = new Image();
 startButtonImg.src = "./img/play.png";
 
-// Load game over image
+// LOAD GAME OVER IMAGE
 const gameOverImg = new Image();
 gameOverImg.src = "./img/gameover.png";
 
-// Load obstacles
+// LOAD OBSTACLE
 const obstacleImg = new Image();
 obstacleImg.src = "./img/satellite3.png";
 
-// Load image for levels screen
+// Load IMAGE FOR LEVEL SCREENS
 const levelUpImg = new Image();
 levelUpImg.src = "./img/levelUp.png";
 
-// Load winning screen image
+// LOAD IMAGE FOR WIN SCREEN
 const winnerImg = new Image();
 winnerImg.src = "./img/winner.png";
 
-// Score
+// SCORE
 const score = {
   current: 0,
   endLevelOne: 3,
@@ -91,20 +91,20 @@ const score = {
   endLevelThree: 41,
 
   update() {
-    // update the score board in DOM
+    // UPDATE SCOREBOARD IN DOM
     let scoreboard = document.getElementById('userScore');
     scoreboard.innerHTML = this.current;
 
-    //change to level 2 state
+    // CHANGE TO LEVEL 2 STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelOne && this.current < this.beginLevelTwo) {
       state.current = state.startLevelTwo;
     }
-    // change to level 3 state
+    // CHANGE TO LEVEL 3 STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelTwo && this.current < this.beginLevelThree) {
       state.current = state.startLevelThree;
     }
 
-    // change to win state
+    // CHANGE TO WIN STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelThree) {
       state.current = state.win;
     }
@@ -116,7 +116,7 @@ const score = {
   }
 };
 
-// Background
+// BACKGROUND
 const background = {
   w: canvas.width,
   h: canvas.height,
@@ -151,7 +151,7 @@ const background = {
 };
 
 
-// mainCharacter
+// MAIN CHARACTER
 const mainCharacter = {
   x: 50,
   y: 150,
@@ -185,7 +185,14 @@ const mainCharacter = {
 
   moveDown() {
     this.y += 10;
+  },
 
+  moveRight(){
+    this.x += 10;
+  },
+
+  moveLeft(){
+    this.x -= 10;
   },
 
   reset() {
@@ -193,17 +200,16 @@ const mainCharacter = {
   },
 };
 
-// Obstacles
+// OBSTACLES
 const obstacle = {
   position: [],
   w: 10,
-  h: 300,
+  h: 400,
   gap: 100,
   maxYPos: -80,
   dx: 2,
-  dxLevelTwo: 3.5,
-  speed: 0,
-  accelerator: 0.25,
+  dy: 50,
+
 
   draw() {
     for (let i = 0; i < this.position.length; i++) {
@@ -211,15 +217,15 @@ const obstacle = {
       let topYPos = p.y;
       let bottomYP = p.y + this.h + this.gap;
 
-      // top
+      // TOP
       ctx.drawImage(obstacleImg, p.x, topYPos, this.w, this.h)
-      // bottom
+      // BOTTOM
       ctx.drawImage(obstacleImg, p.x, bottomYP, this.w, this.h)
     }
   },
 
   update() {
-    // level 1
+  // CREATE NEW OBSTACLES IN AN ARRAY - LEVEL 1
     if (state.current === state.gameLevelOne) {
       if (frames % 100 == 0 && score.current < score.endLevelOne) {
         this.position.push({
@@ -230,7 +236,7 @@ const obstacle = {
     };
 
 
-    // level 2
+    // CREATE NEW OBSTACLES IN AN ARRAY - LEVEL 2
     if (state.current === state.gameLevelTwo) {
       if (frames % 100 == 0 && score.current >= score.beginLevelTwo && score.current < score.endLevelTwo) {
         this.position.push({
@@ -241,7 +247,7 @@ const obstacle = {
       };
     };
 
-    // level 3 
+     // CREATE NEW OBSTACLES IN AN ARRAY - LEVEL 3
     if (state.current === state.gameLevelThree) {
       if (frames % 100 == 0 && score.current >= score.beginLevelThree && score.current < score.endLevelThree) {
         this.position.push({
@@ -252,29 +258,36 @@ const obstacle = {
       };
     };
 
-
-
     for (let i = 0; i < this.position.length; i++) {
       let p = this.position[i];
 
-      //move obstacles to the left
-      //level 1
+      // MOVE OBSTACLES TO THE LEFT & ANIMATE OBSTACLES - LEVEL 1
       if (state.current === state.gameLevelOne) {
         p.x -= this.dx;
+        if(frames % 240 === 0){
+          p.y -= this.dy;
+          this.gap = 0;
+        }
+        if(frames % 245 === 0){
+          p.y += this.dy;
+          this.gap = 100;
+        }
       }
 
-      //level 2
+      // MOVE OBSTACLES TO THE LEFT - LEVEL 2
       if (state.current === state.gameLevelTwo) {
         p.x -= this.dx;
       }
 
-      // level 3
+      // MOVE OBSTACLES TO THE LEFT - LEVEL 3
       if (state.current === state.gameLevelThree) {
         p.x -= this.dx;
       }
 
+    
+      
 
-      // collision detection
+      // COLLISION DETECTION
       let bottomYP = p.y + this.h + this.gap;
       //main character
       let characterLeft = mainCharacter.x;
@@ -313,7 +326,6 @@ const obstacle = {
 
     };
   },
-
 
   reset() {
     this.position = [];
@@ -418,6 +430,18 @@ window.onload = function () {
     if (e.keyCode === 40) {
       if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
         mainCharacter.moveDown();
+      }
+    }
+
+    if (e.keyCode === 39) {
+      if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
+        mainCharacter.moveRight();
+      }
+    }
+
+    if (e.keyCode === 37) {
+      if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
+        mainCharacter.moveLeft();
       }
     }
   }
