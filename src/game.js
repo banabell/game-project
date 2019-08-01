@@ -13,7 +13,10 @@ const state = {
   gameLevelOne: 1,
   startLevelTwo: 2,
   gameLevelTwo: 3,
-  over: 4,
+  startLevelThree: 4,
+  gameLevelThree: 5,
+  win: 6,
+  over: 7,
 };
 
 
@@ -21,18 +24,30 @@ canvas.onclick = function (e) {
   switch (state.current) {
     case state.start: state.current = state.gameLevelOne;
       break;
-    case state.over: 
-    score.currentScore = 0;
-    mainCharacter.reset();
-    obstacle.reset();
-    state.current = state.start;
+    case state.over:
+      score.reset();
+      mainCharacter.reset();
+      obstacle.reset();
+      state.current = state.start;
       break;
-      case state.startLevelTwo: 
+    case state.startLevelTwo:
       score.current = score.beginLevelTwo;
       state.current = state.gameLevelTwo;
       mainCharacter.reset();
       obstacle.reset();
-        break;
+      break;
+    case state.startLevelThree:
+      score.current = score.beginLevelThree;
+      state.current = state.gameLevelThree;
+      mainCharacter.reset();
+      obstacle.reset();
+      break;
+    case state.win:
+        score.reset();
+        mainCharacter.reset();
+        obstacle.reset();
+        state.current = state.start;
+      break;
   }
 };
 
@@ -58,29 +73,47 @@ gameOverImg.src = "./img/gameover.png";
 const obstacleImg = new Image();
 obstacleImg.src = "./img/satellite3.png";
 
-// Load image for levelTwo screen
+// Load image for levels screen
 const levelUpImg = new Image();
 levelUpImg.src = "./img/levelUp.png";
 
-// Score
+// Load winning screen image
+const winnerImg = new Image();
+winnerImg.src = "./img/winner.png";
 
+// Score
 const score = {
   current: 0,
-  endLevelOne: 6,
+  endLevelOne: 3,
   beginLevelTwo: 20,
-  endLevelTwo: 26,
+  endLevelTwo: 21,
+  beginLevelThree: 40,
+  endLevelThree: 41,
 
-  update(){
+  update() {
     // update the score board in DOM
     let scoreboard = document.getElementById('userScore');
     scoreboard.innerHTML = this.current;
 
-    //change to Level 2 start screen 
-    if(obstacle.position.length === 0 && this.current >= this.endLevelOne && this.current < this.beginLevelTwo){
+    //change to level 2 state
+    if (obstacle.position.length === 0 && this.current >= this.endLevelOne && this.current < this.beginLevelTwo) {
       state.current = state.startLevelTwo;
+    }
+    // change to level 3 state
+    if (obstacle.position.length === 0 && this.current >= this.endLevelTwo && this.current < this.beginLevelThree) {
+      state.current = state.startLevelThree;
+    }
 
+    // change to win state
+    if (obstacle.position.length === 0 && this.current >= this.endLevelThree) {
+      state.current = state.win;
+    }
+
+  },
+
+  reset(){
+    score.current = 0;
   }
-},
 };
 
 // Background
@@ -101,7 +134,7 @@ const background = {
   },
 
   update() {
-    if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo) {
+    if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo || state.current === state.gameLevelThree) {
 
       ctx.drawImage(backgroundImg, this.x--, 0, this.w, this.h);
       ctx.drawImage(backgroundImg, this.x2--, 0, this.w, this.h);
@@ -136,7 +169,7 @@ const mainCharacter = {
       this.y = 150;
     }
 
-    if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo) {
+    if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo || state.current === state.gameLevelThree) {
       this.speed += this.gravity;
       this.y += this.speed;
       if (this.y + 50 >= canvas.height) {
@@ -155,7 +188,7 @@ const mainCharacter = {
 
   },
 
-  reset(){
+  reset() {
     this.speed = 0;
   },
 };
@@ -187,75 +220,92 @@ const obstacle = {
 
   update() {
     // level 1
-    if(state.current === state.gameLevelOne){
+    if (state.current === state.gameLevelOne) {
       if (frames % 100 == 0 && score.current < score.endLevelOne) {
         this.position.push({
           x: canvas.width,
           y: this.maxYPos * (Math.random() + 1.5)
         });
-    }
-    }
+      };
+    };
 
 
     // level 2
-    if(state.current === state.gameLevelTwo){
-      if (frames % 50 == 0 && score.current >= score.endLevelOne && score.current < score.endLevelTwo) {
+    if (state.current === state.gameLevelTwo) {
+      if (frames % 100 == 0 && score.current >= score.beginLevelTwo && score.current < score.endLevelTwo) {
         this.position.push({
           x: canvas.width,
           y: this.maxYPos * (Math.random() + 1.5)
         });
-      
-    };
-    }
 
-   
+      };
+    };
+
+    // level 3 
+    if (state.current === state.gameLevelThree) {
+      if (frames % 100 == 0 && score.current >= score.beginLevelThree && score.current < score.endLevelThree) {
+        this.position.push({
+          x: canvas.width,
+          y: this.maxYPos * (Math.random() + 1.5)
+        });
+
+      };
+    };
+
+
+
     for (let i = 0; i < this.position.length; i++) {
       let p = this.position[i];
-      
+
       //move obstacles to the left
-        //level 1
-        if(state.current === state.gameLevelOne){
-          p.x -= this.dx;
-        }
-    
-        //level 2
-        if(state.current === state.gameLevelTwo){
-          p.x -= this.dxLevelTwo;
-        }
-     
-      
+      //level 1
+      if (state.current === state.gameLevelOne) {
+        p.x -= this.dx;
+      }
+
+      //level 2
+      if (state.current === state.gameLevelTwo) {
+        p.x -= this.dx;
+      }
+
+      // level 3
+      if (state.current === state.gameLevelThree) {
+        p.x -= this.dx;
+      }
+
+
       // collision detection
       let bottomYP = p.y + this.h + this.gap;
-          //main character
+      //main character
       let characterLeft = mainCharacter.x;
       let characterTop = mainCharacter.y;
       let characterRight = mainCharacter.x + mainCharacter.w;
       let characterBottom = mainCharacter.y + mainCharacter.h;
 
-          //top obstacle
+      //top obstacle
       let tObstacleLeft = p.x;
       let tObstacleTop = p.y;
       let tObstacleRight = p.x + this.w;
       let tObstacleBottom = p.y + this.h;
 
-          //bottom obstacle
+      //bottom obstacle
       let bObstacleLeft = p.x;
       let bObstacleTop = bottomYP;
       let bObstacleRight = p.x + this.w;
       let bObstacleBottom = bottomYP + this.h;
 
-        // detect collision with top obstacle
-        if(characterRight > tObstacleLeft && characterLeft < tObstacleRight && characterBottom > tObstacleTop && characterTop < tObstacleBottom){
-          state.current = state.over;
-        }
+      // detect collision with top obstacle
+      if (characterRight > tObstacleLeft && characterLeft < tObstacleRight && characterBottom > tObstacleTop && characterTop < tObstacleBottom) {
+        state.current = state.over;
+      }
 
-        // detect collision with bottom obsctale
-        if(characterRight > bObstacleLeft && characterLeft < bObstacleRight && characterBottom > bObstacleTop && characterTop < bObstacleBottom){
-          state.current = state.over;
-        }
+      // detect collision with bottom obsctale
+      if (characterRight > bObstacleLeft && characterLeft < bObstacleRight && characterBottom > bObstacleTop && characterTop < bObstacleBottom) {
+        state.current = state.over;
+      }
 
-// delete obstacle from postion array when off the canvas
-// increase the score
+      // delete obstacle from postion array when off the canvas
+      // increase the score
       if (p.x + this.w <= 0) {
         this.position.shift();
         score.current += 1;
@@ -263,9 +313,9 @@ const obstacle = {
 
     };
   },
-  
-  
-  reset(){
+
+
+  reset() {
     this.position = [];
   },
 
@@ -297,16 +347,30 @@ const gameOverScreen = {
   }
 };
 
-const levelTwoStartScreen = {
+const levelUpStartScreen = {
   w: 250,
   h: 150,
   x: 270,
   y: 150,
 
-  draw(){
-    if(state.current === state.startLevelTwo){
+  draw() {
+    if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
       ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
-    
+
+    }
+  }
+};
+
+const winScreen = {
+  w: 250,
+  h: 150,
+  x: 270,
+  y: 150,
+
+  draw() {
+    if (state.current === state.win) {
+      ctx.drawImage(winnerImg, this.x, this.y, this.w, this.h)
+
     }
   }
 };
@@ -319,7 +383,8 @@ function draw() {
   startScreen.draw();
   gameOverScreen.draw();
   obstacle.draw();
-  levelTwoStartScreen.draw();
+  levelUpStartScreen.draw();
+  winScreen.draw();
 };
 
 
@@ -346,12 +411,12 @@ window.onload = function () {
   loop();
   document.onkeydown = function (e) {
     if (e.keyCode === 38) {
-      if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo) {
+      if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
         mainCharacter.moveUp();
       }
     }
     if (e.keyCode === 40) {
-      if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo) {
+      if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
         mainCharacter.moveDown();
       }
     }
