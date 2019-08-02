@@ -120,7 +120,7 @@ const score = {
 const background = {
   w: canvas.width,
   h: canvas.height,
-  x: 0,
+  x1: 0,
   x2: 800,
   y: 0,
   dx: 2,
@@ -129,25 +129,24 @@ const background = {
   draw() {
     if (state.current === state.start) {
       ctx.drawImage(backgroundImg, 0, 0, this.w, this.h);
-      ctx.drawImage(backgroundImg, this.x2, 0, this.w, this.h);
+      ctx.drawImage(backgroundImg, this.w, 0, this.w, this.h);
     }
   },
 
+  // LOOPING BACKGROUND IMAGE
   update() {
     if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo || state.current === state.gameLevelThree) {
 
-      ctx.drawImage(backgroundImg, this.x--, 0, this.w, this.h);
+      ctx.drawImage(backgroundImg, this.x1--, 0, this.w, this.h);
       ctx.drawImage(backgroundImg, this.x2--, 0, this.w, this.h);
-      if (this.x <= -799) {
-        this.x = 800;
+      if (this.x1 <= 1 - this.w) {
+        this.x1 = this.w;
       }
-      if (this.x2 <= -799) {
-        this.x2 = 800;
+      if (this.x2 <= 1 - this.w) {
+        this.x2 = this.w;
       }
     }
   }
-
-
 };
 
 
@@ -159,6 +158,8 @@ const mainCharacter = {
   h: 50,
   speed: 0,
   gravity: 0.0005,
+  dx: 15,
+  dy: 15,
 
   draw() {
     ctx.drawImage(mainCharacterImg, this.x, this.y, this.w, this.h)
@@ -180,19 +181,19 @@ const mainCharacter = {
   },
 
   moveUp() {
-    this.y -= 15;
+    this.y -= this.dy;
   },
 
   moveDown() {
-    this.y += 10;
+    this.y += this.dy;
   },
 
   moveRight(){
-    this.x += 10;
+    this.x += this.dx;
   },
 
   moveLeft(){
-    this.x -= 10;
+    this.x -= this.dx;
   },
 
   reset() {
@@ -217,9 +218,9 @@ const obstacle = {
       let topYPos = p.y;
       let bottomYP = p.y + this.h + this.gap;
 
-      // TOP
+      // DRAWING TOP OBSTACLE
       ctx.drawImage(obstacleImg, p.x, topYPos, this.w, this.h)
-      // BOTTOM
+      // DRAWING BOTTOM OBSTACLE
       ctx.drawImage(obstacleImg, p.x, bottomYP, this.w, this.h)
     }
   },
@@ -264,14 +265,14 @@ const obstacle = {
       // MOVE OBSTACLES TO THE LEFT & ANIMATE OBSTACLES - LEVEL 1
       if (state.current === state.gameLevelOne) {
         p.x -= this.dx;
-        if(frames % 240 === 0){
-          p.y -= this.dy;
-          this.gap = 0;
-        }
-        if(frames % 245 === 0){
-          p.y += this.dy;
-          this.gap = 100;
-        }
+        // if(frames % 240 === 0){
+        //   p.y -= this.dy;
+        //   this.gap = 0;
+        // }
+        // if(frames % 245 === 0){
+        //   p.y += this.dy;
+        //   this.gap = 100;
+        // }
       }
 
       // MOVE OBSTACLES TO THE LEFT - LEVEL 2
@@ -373,6 +374,33 @@ const levelUpStartScreen = {
   }
 };
 
+const levelLabel = {
+  w: 100,
+  h: 100,
+  x: 0,
+  y: 0,
+
+  draw(){
+    if(state.current === state.gameLevelOne){
+      ctx.font = '20px Helvetica';
+      ctx.fillStyle = 'white'
+      ctx.fillText('Level 1', 0, 20)
+    };
+
+    if(state.current === state.gameLevelTwo){
+      ctx.font = '20px Helvetica';
+      ctx.fillStyle = 'white'
+      ctx.fillText('Level 2', 0, 20)
+    };
+
+    if(state.current === state.gameLevelThree){
+      ctx.font = '20px Helvetica';
+      ctx.fillStyle = 'white'
+      ctx.fillText('Level 3', 0, 20)
+    };
+  },
+};
+
 const winScreen = {
   w: 250,
   h: 150,
@@ -397,6 +425,7 @@ function draw() {
   obstacle.draw();
   levelUpStartScreen.draw();
   winScreen.draw();
+  levelLabel.draw();
 };
 
 
