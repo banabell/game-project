@@ -43,10 +43,10 @@ canvas.onclick = function (e) {
       obstacle.reset();
       break;
     case state.win:
-        score.reset();
-        mainCharacter.reset();
-        obstacle.reset();
-        state.current = state.start;
+      score.reset();
+      mainCharacter.reset();
+      obstacle.reset();
+      state.current = state.start;
       break;
   }
 };
@@ -111,7 +111,7 @@ const score = {
 
   },
 
-  reset(){
+  reset() {
     score.current = 0;
   }
 };
@@ -161,6 +161,7 @@ const mainCharacter = {
   dx: 15,
   dy: 15,
 
+
   draw() {
     ctx.drawImage(mainCharacterImg, this.x, this.y, this.w, this.h)
   },
@@ -188,11 +189,11 @@ const mainCharacter = {
     this.y += this.dy;
   },
 
-  moveRight(){
+  moveRight() {
     this.x += this.dx;
   },
 
-  moveLeft(){
+  moveLeft() {
     this.x -= this.dx;
   },
 
@@ -209,7 +210,10 @@ const obstacle = {
   gap: 100,
   maxYPos: -80,
   dx: 2,
-  dy: 50,
+  dx2: 3,
+  dx3: 3.5,
+  dy: 100,
+
 
 
   draw() {
@@ -226,7 +230,7 @@ const obstacle = {
   },
 
   update() {
-  // CREATE NEW OBSTACLES IN AN ARRAY - LEVEL 1
+    // CREATE NEW OBSTACLES IN AN ARRAY - LEVEL 1
     if (state.current === state.gameLevelOne) {
       if (frames % 100 == 0 && score.current < score.endLevelOne) {
         this.position.push({
@@ -239,7 +243,7 @@ const obstacle = {
 
     // CREATE NEW OBSTACLES IN AN ARRAY - LEVEL 2
     if (state.current === state.gameLevelTwo) {
-      if (frames % 100 == 0 && score.current >= score.beginLevelTwo && score.current < score.endLevelTwo) {
+      if (frames % 60 == 0 && score.current >= score.beginLevelTwo && score.current < score.endLevelTwo) {
         this.position.push({
           x: canvas.width,
           y: this.maxYPos * (Math.random() + 1.5)
@@ -248,9 +252,9 @@ const obstacle = {
       };
     };
 
-     // CREATE NEW OBSTACLES IN AN ARRAY - LEVEL 3
+    // CREATE NEW OBSTACLES IN AN ARRAY - LEVEL 3
     if (state.current === state.gameLevelThree) {
-      if (frames % 100 == 0 && score.current >= score.beginLevelThree && score.current < score.endLevelThree) {
+      if (frames % 30 == 0 && score.current >= score.beginLevelThree && score.current < score.endLevelThree) {
         this.position.push({
           x: canvas.width,
           y: this.maxYPos * (Math.random() + 1.5)
@@ -265,28 +269,46 @@ const obstacle = {
       // MOVE OBSTACLES TO THE LEFT & ANIMATE OBSTACLES - LEVEL 1
       if (state.current === state.gameLevelOne) {
         p.x -= this.dx;
-        // if(frames % 240 === 0){
-        //   p.y -= this.dy;
-        //   this.gap = 0;
-        // }
-        // if(frames % 245 === 0){
-        //   p.y += this.dy;
-        //   this.gap = 100;
-        // }
+        if (frames % 240 === 0) {
+          p.y += 100
+          this.gap = 0;
+        }
+        if (frames % 245 === 0) {
+          p.y -= 100;
+          this.gap = 100
+        }
       }
 
-      // MOVE OBSTACLES TO THE LEFT - LEVEL 2
+
+      // MOVE OBSTACLES TO THE LEFT & ANIMATE OBSTACLES - LEVEL 2
       if (state.current === state.gameLevelTwo) {
-        p.x -= this.dx;
+        p.x -= this.dx2;
+        if (frames % 240 === 0) {
+          p.y += 100;
+          this.gap = 0;
+     
+        }
+        if (frames % 245 === 0) {
+          p.y -= 100;
+          this.gap = 100
+        }
       }
 
-      // MOVE OBSTACLES TO THE LEFT - LEVEL 3
+      // MOVE OBSTACLES TO THE LEFT AND ANIMATE OBTACLES - LEVEL 3
       if (state.current === state.gameLevelThree) {
-        p.x -= this.dx;
+        p.x -= this.dx3;
+        if (frames % 240 === 0) {
+          p.y += 100;
+          this.gap = 0;
+        }
+        if (frames % 245 === 0) {
+          p.y -= 100;
+          this.gap = 100;
+
+        }
       }
 
-    
-      
+
 
       // COLLISION DETECTION
       let bottomYP = p.y + this.h + this.gap;
@@ -380,20 +402,20 @@ const levelLabel = {
   x: 0,
   y: 0,
 
-  draw(){
-    if(state.current === state.gameLevelOne){
+  draw() {
+    if (state.current === state.gameLevelOne) {
       ctx.font = '20px Helvetica';
       ctx.fillStyle = 'white'
       ctx.fillText('Level 1', 0, 20)
     };
 
-    if(state.current === state.gameLevelTwo){
+    if (state.current === state.gameLevelTwo) {
       ctx.font = '20px Helvetica';
       ctx.fillStyle = 'white'
       ctx.fillText('Level 2', 0, 20)
     };
 
-    if(state.current === state.gameLevelThree){
+    if (state.current === state.gameLevelThree) {
       ctx.font = '20px Helvetica';
       ctx.fillStyle = 'white'
       ctx.fillText('Level 3', 0, 20)
@@ -455,23 +477,37 @@ window.onload = function () {
       if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
         mainCharacter.moveUp();
       }
-    }
+    };
+
     if (e.keyCode === 40) {
       if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
         mainCharacter.moveDown();
       }
-    }
+    };
 
     if (e.keyCode === 39) {
       if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
         mainCharacter.moveRight();
       }
-    }
+    };
 
     if (e.keyCode === 37) {
       if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
         mainCharacter.moveLeft();
       }
-    }
+    };
+
+    // secret key to jump to level 2 (to do: randomize it)
+    if (e.keyCode === 50) {
+      state.current = state.gameLevelTwo;
+      score.current = score.beginLevelTwo
+    };
+    // secret key to jump to level 3 (to do: randomize it)
+    if (e.keyCode === 51) {
+      state.current = state.gameLevelThree;
+      score.current = score.beginLevelThree;
+    };
+
   }
 }
+
