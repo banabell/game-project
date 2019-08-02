@@ -3,7 +3,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// VARIABLES
+// GLOBAL VARIABLES
 let frames = 0;
 
 // GAME STATE
@@ -57,9 +57,9 @@ canvas.onclick = function (e) {
 const backgroundImg = new Image();
 backgroundImg.src = "./img/testbackground.png";
 
-// LOAD MAIN CHARACTER
+// LOAD CHARACTER SPRITE SHEET
 const mainCharacterImg = new Image();
-mainCharacterImg.src = "./img/ghost.png";
+mainCharacterImg.src = "./img/ApeanautSprite.png"
 
 // LOAD START BUTTON
 const startButtonImg = new Image();
@@ -152,21 +152,37 @@ const background = {
 
 // MAIN CHARACTER
 const mainCharacter = {
+  animation: [
+    {sX: 0, sY: 0},
+    {sX: 70, sY: 0},
+    {sX: 140, sY: 0},
+    {sX: 210, sY: 0},
+    {sX: 280, sY: 0},
+    {sX: 350, sY: 0},
+  ],
+
   x: 50,
   y: 150,
-  w: 50,
-  h: 50,
+  w: 60,
+  h: 70,
   speed: 0,
   gravity: 0.0005,
   dx: 15,
   dy: 15,
+  frame: 0,
 
 
   draw() {
-    ctx.drawImage(mainCharacterImg, this.x, this.y, this.w, this.h)
+    let mainCharacter = this.animation[this.frame]
+    ctx.drawImage(mainCharacterImg, mainCharacter.sX, mainCharacter.sY, this.w, this.h, this.x, this.y, this.w, this.h)
   },
 
   update() {
+    if(frames % 5 === 0){
+      this.frame += 1;
+    }
+    this.frame = this.frame % this.animation.length;
+
     if (state.current === state.start) {
       this.y = 150;
     }
@@ -283,12 +299,12 @@ const obstacle = {
       // MOVE OBSTACLES TO THE LEFT & ANIMATE OBSTACLES - LEVEL 2
       if (state.current === state.gameLevelTwo) {
         p.x -= this.dx2;
-        if (frames % 240 === 0) {
+        if (frames % 242 === 0) {
           p.y += 100;
           this.gap = 0;
      
         }
-        if (frames % 245 === 0) {
+        if (frames % 246 === 0) {
           p.y -= 100;
           this.gap = 100
         }
@@ -297,17 +313,16 @@ const obstacle = {
       // MOVE OBSTACLES TO THE LEFT AND ANIMATE OBTACLES - LEVEL 3
       if (state.current === state.gameLevelThree) {
         p.x -= this.dx3;
-        if (frames % 240 === 0) {
+        if (frames % 235 === 0) {
           p.y += 100;
           this.gap = 0;
         }
-        if (frames % 245 === 0) {
+        if (frames % 236 === 0) {
           p.y -= 100;
           this.gap = 100;
 
         }
       }
-
 
 
       // COLLISION DETECTION
