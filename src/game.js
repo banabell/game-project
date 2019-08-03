@@ -61,10 +61,6 @@ backgroundImg.src = "./img/testbackground.png";
 const mainCharacterImg = new Image();
 mainCharacterImg.src = "./img/ApeanautSprite.png"
 
-// LOAD START BUTTON
-const startButtonImg = new Image();
-startButtonImg.src = "./img/play.png";
-
 // LOAD GAME OVER IMAGE
 const gameOverImg = new Image();
 gameOverImg.src = "./img/gameover.png";
@@ -73,7 +69,7 @@ gameOverImg.src = "./img/gameover.png";
 const obstacleImg = new Image();
 obstacleImg.src = "./img/satellite3.png";
 
-// Load IMAGE FOR LEVEL SCREENS
+// LOAD IMAGE FOR LEVEL SCREENS
 const levelUpImg = new Image();
 levelUpImg.src = "./img/levelUp.png";
 
@@ -153,22 +149,25 @@ const background = {
 // MAIN CHARACTER
 const mainCharacter = {
   animation: [
-    {sX: 0, sY: 0},
-    {sX: 70, sY: 0},
-    {sX: 140, sY: 0},
-    {sX: 210, sY: 0},
-    {sX: 280, sY: 0},
-    {sX: 350, sY: 0},
+    { sX: 0, sY: 0 },
+    { sX: 70, sY: 0 },
+    { sX: 140, sY: 0 },
+    { sX: 210, sY: 0 },
+    { sX: 280, sY: 0 },
+    { sX: 350, sY: 0 },
   ],
 
   x: 50,
   y: 150,
   w: 60,
   h: 70,
+
   speed: 0,
   gravity: 0.0005,
+
   dx: 15,
   dy: 15,
+
   frame: 0,
 
 
@@ -178,15 +177,25 @@ const mainCharacter = {
   },
 
   update() {
-    if(frames % 5 === 0){
-      this.frame += 1;
-    }
-    this.frame = this.frame % this.animation.length;
+    // ANIMATE THE MAIN CHARACTER
+    if (state.current !== state.over) {
 
+
+      if (frames % 5 === 0) {
+        this.frame += 1;
+      }
+
+      if (this.frame === 4) {
+        this.frame = 0;
+      }
+    }
+
+    // RESET Y POSITION WHEN IN START STATE
     if (state.current === state.start) {
       this.y = 150;
     }
 
+    // GRAVITY ON CHARACTER
     if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo || state.current === state.gameLevelThree) {
       this.speed += this.gravity;
       this.y += this.speed;
@@ -238,9 +247,9 @@ const obstacle = {
       let topYPos = p.y;
       let bottomYP = p.y + this.h + this.gap;
 
-      // DRAWING TOP OBSTACLE
+      // DRAW TOP OBSTACLE
       ctx.drawImage(obstacleImg, p.x, topYPos, this.w, this.h)
-      // DRAWING BOTTOM OBSTACLE
+      // DRAW BOTTOM OBSTACLE
       ctx.drawImage(obstacleImg, p.x, bottomYP, this.w, this.h)
     }
   },
@@ -302,7 +311,7 @@ const obstacle = {
         if (frames % 242 === 0) {
           p.y += 100;
           this.gap = 0;
-     
+
         }
         if (frames % 246 === 0) {
           p.y -= 100;
@@ -345,18 +354,18 @@ const obstacle = {
       let bObstacleRight = p.x + this.w;
       let bObstacleBottom = bottomYP + this.h;
 
-      // detect collision with top obstacle
+      // DETECT COLLISION WITH TOP OBSTACLE
       if (characterRight > tObstacleLeft && characterLeft < tObstacleRight && characterBottom > tObstacleTop && characterTop < tObstacleBottom) {
         state.current = state.over;
       }
 
-      // detect collision with bottom obsctale
+      // DETECT COLLISION WITH BOTTOM OBSTACLE
       if (characterRight > bObstacleLeft && characterLeft < bObstacleRight && characterBottom > bObstacleTop && characterTop < bObstacleBottom) {
         state.current = state.over;
       }
 
-      // delete obstacle from postion array when off the canvas
-      // increase the score
+      // DELETE OBSTACLE FROM POSITION ARRAY WHEN OFF CANVAS
+      // INCREASE SCORE WHEN OBSTACLE OFF CANVAS
       if (p.x + this.w <= 0) {
         this.position.shift();
         score.current += 1;
@@ -374,12 +383,14 @@ const obstacle = {
 const startScreen = {
   w: 130,
   h: 130,
-  x: 330,
-  y: 150,
+  x: 150,
+  y: canvas.height / 2,
 
   draw() {
-    if (state.current == state.start) {
-      ctx.drawImage(startButtonImg, this.x, this.y, this.w, this.h)
+    if (state.current === state.start) {
+      ctx.font = '20px "Press Start 2P"';
+      ctx.fillStyle = 'white'
+      ctx.fillText('CLICK TO START THE GAME', this.x, this.y)
     }
   }
 };
@@ -387,12 +398,20 @@ const startScreen = {
 const gameOverScreen = {
   w: 250,
   h: 150,
-  x: 270,
-  y: 150,
+  x1: 250,
+  y1: 250,
+  x2: 220,
+  y2: 300,
 
   draw() {
     if (state.current == state.over) {
-      ctx.drawImage(gameOverImg, this.x, this.y, this.w, this.h)
+      ctx.font = '35px "Press Start 2P"';
+      ctx.fillStyle = 'white'
+      ctx.fillText('GAME OVER', this.x1, this.y1)
+
+      ctx.font = '20px "Press Start 2P"';
+      ctx.fillStyle = 'white'
+      ctx.fillText('CLICK TO PLAY AGAIN', this.x2, this.y2)
     }
   }
 };
@@ -400,13 +419,32 @@ const gameOverScreen = {
 const levelUpStartScreen = {
   w: 250,
   h: 150,
-  x: 270,
-  y: 150,
+  x1: 250,
+  y1: 250,
+  x2: 80,
+  y2: 300,
 
   draw() {
-    if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
-      ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
+    if (state.current === state.startLevelTwo) {
+      // ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
+      ctx.font = '35px "Press Start 2P"';
+      ctx.fillStyle = 'white'
+      ctx.fillText('AMAZING!', this.x1, this.y1)
 
+      ctx.font = '20px "Press Start 2P"';
+      ctx.fillStyle = 'white'
+      ctx.fillText('CLICK TO MOVE TO THE NEXT LEVEL', this.x2, this.y2)
+    }
+
+    if (state.current === state.startLevelThree) {
+      // ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
+      ctx.font = '30px "Press Start 2P"';
+      ctx.fillStyle = 'white'
+      ctx.fillText('WOW.YOU ROCK!', this.x1, this.y1)
+
+      ctx.font = '20px "Press Start 2P"';
+      ctx.fillStyle = 'white'
+      ctx.fillText('CLICK TO MOVE TO THE FINAL LEVEL', this.x2, this.y2)
     }
   }
 };
@@ -415,25 +453,25 @@ const levelLabel = {
   w: 100,
   h: 100,
   x: 0,
-  y: 0,
+  y: 20,
 
   draw() {
     if (state.current === state.gameLevelOne) {
-      ctx.font = '20px Helvetica';
+      ctx.font = '20px "Press Start 2P"';
       ctx.fillStyle = 'white'
-      ctx.fillText('Level 1', 0, 20)
+      ctx.fillText('Level 1', this.x, this.y)
     };
 
     if (state.current === state.gameLevelTwo) {
-      ctx.font = '20px Helvetica';
+      ctx.font = '20px "Press Start 2P"';
       ctx.fillStyle = 'white'
-      ctx.fillText('Level 2', 0, 20)
+      ctx.fillText('Level 2', this.x, this.y)
     };
 
     if (state.current === state.gameLevelThree) {
-      ctx.font = '20px Helvetica';
+      ctx.font = '20px "Press Start 2P"';
       ctx.fillStyle = 'white'
-      ctx.fillText('Level 3', 0, 20)
+      ctx.fillText('Level 3', this.x, this.y)
     };
   },
 };
@@ -441,12 +479,21 @@ const levelLabel = {
 const winScreen = {
   w: 250,
   h: 150,
-  x: 270,
-  y: 150,
+  x1: 150,
+  y1: 250,
+  x2: 260,
+  y2: 300,
 
   draw() {
     if (state.current === state.win) {
-      ctx.drawImage(winnerImg, this.x, this.y, this.w, this.h)
+      // ctx.drawImage(winnerImg, this.x, this.y, this.w, this.h)
+      ctx.font = '30px "Press Start 2P"';
+      ctx.fillStyle = 'white'
+      ctx.fillText('INCREDIBLE! YOU WON!', this.x1, this.y1)
+
+      ctx.font = '20px "Press Start 2P"';
+      ctx.fillStyle = 'white'
+      ctx.fillText('CLICK TO PLAY AGAIN', this.x2, this.y2)
 
     }
   }

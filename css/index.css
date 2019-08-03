@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap');
+
 body {
   background-color: black;
   display: flex;
@@ -6,6 +8,7 @@ body {
 .scoreBoard  {
   color: #90AEAE;
   text-align: center;
+  font-family: 'Press Start 2P';
 }
 
 .scoreBoard span {
