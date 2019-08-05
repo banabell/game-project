@@ -29,6 +29,7 @@ canvas.onclick = function (e) {
       mainCharacter.reset();
       obstacle.reset();
       state.current = state.start;
+      frames = 0;
       break;
     case state.startLevelTwo:
       score.current = score.beginLevelTwo;
@@ -57,6 +58,14 @@ canvas.onclick = function (e) {
 const backgroundImg = new Image();
 backgroundImg.src = "./img/testbackground.png";
 
+// LOAD A PLAY BUTTON
+const playButtonImg = new Image();
+playButtonImg.src = "./img/playbutton.png"
+
+// LOAD A RESTART BUTTON
+const retartButtonImg = new Image();
+retartButtonImg.src = "./img/restart.png"
+
 // LOAD CHARACTER SPRITE SHEET
 const mainCharacterImg = new Image();
 mainCharacterImg.src = "./img/ApeanautSprite.png"
@@ -77,7 +86,11 @@ levelUpImg.src = "./img/levelUp.png";
 const winnerImg = new Image();
 winnerImg.src = "./img/winner.png";
 
-// SCORE
+// LOAD MOONWALK DANCE SPRITE
+const moonWalkImg = new Image();
+moonWalkImg.src = "./img/moonwalk.png";
+
+// SCORE (DOM)
 const score = {
   current: 0,
   endLevelOne: 3,
@@ -111,6 +124,39 @@ const score = {
     score.current = 0;
   }
 };
+
+
+
+ // Messages (DOM)
+ const messagetxt = {
+   messages: ["hello", "you"],
+   i: 0,
+   j: 0,
+   currentMessage: '',
+   letter: '',
+  
+
+   type(){
+     if(messagetxt.i === messagetxt.messages.length){
+      messagetxt.i = 0;
+     };
+
+     messagetxt.currentMessage = messagetxt.messages[messagetxt.i];
+     messagetxt.letter = messagetxt.currentMessage.slice(0, messagetxt.j++);
+
+     document.getElementById('message').innerHTML = messagetxt.letter;
+
+     if(messagetxt.letter.length === messagetxt.currentMessage.length){
+      messagetxt.i  += 1;
+      messagetxt.j = 0;
+     }
+
+  
+     setTimeout(messagetxt.type, 400)
+   }
+    
+};
+
 
 // BACKGROUND
 const background = {
@@ -158,8 +204,8 @@ const mainCharacter = {
   ],
 
   x: 50,
-  y: 150,
-  w: 60,
+  y: 160,
+  w: 50,
   h: 70,
 
   speed: 0,
@@ -174,18 +220,19 @@ const mainCharacter = {
   draw() {
     let mainCharacter = this.animation[this.frame]
     ctx.drawImage(mainCharacterImg, mainCharacter.sX, mainCharacter.sY, this.w, this.h, this.x, this.y, this.w, this.h)
+
+    if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
+      ctx.drawImage(mainCharacterImg, mainCharacter.sX, mainCharacter.sY, this.w, this.h, this.x, this.y, this.w, this.h)
+    }
   },
 
   update() {
-    // ANIMATE THE MAIN CHARACTER
-    if (state.current !== state.over) {
-
-
+    // ANIMATE THE MAIN CHARACTER 
+    if (state.current === state.start || state.current === state.gameLevelOne || state.current === state.gameLevelTwo || state.current === state.gameLevelThree) {
       if (frames % 5 === 0) {
         this.frame += 1;
       }
-
-      if (this.frame === 4) {
+      if (this.frame === this.animation.length) {
         this.frame = 0;
       }
     }
@@ -224,6 +271,8 @@ const mainCharacter = {
 
   reset() {
     this.speed = 0;
+    this.x = 50;
+    this.y = 160;
   },
 };
 
@@ -232,7 +281,7 @@ const obstacle = {
   position: [],
   w: 10,
   h: 400,
-  gap: 100,
+  gap: 150,
   maxYPos: -80,
   dx: 2,
   dx2: 3,
@@ -295,12 +344,12 @@ const obstacle = {
       if (state.current === state.gameLevelOne) {
         p.x -= this.dx;
         if (frames % 240 === 0) {
-          p.y += 100
+          p.y += 150
           this.gap = 0;
         }
         if (frames % 245 === 0) {
-          p.y -= 100;
-          this.gap = 100
+          p.y -= 150;
+          this.gap = 150
         }
       }
 
@@ -309,13 +358,13 @@ const obstacle = {
       if (state.current === state.gameLevelTwo) {
         p.x -= this.dx2;
         if (frames % 242 === 0) {
-          p.y += 100;
+          p.y += 150;
           this.gap = 0;
 
         }
         if (frames % 246 === 0) {
-          p.y -= 100;
-          this.gap = 100
+          p.y -= 150;
+          this.gap = 150
         }
       }
 
@@ -323,12 +372,12 @@ const obstacle = {
       if (state.current === state.gameLevelThree) {
         p.x -= this.dx3;
         if (frames % 235 === 0) {
-          p.y += 100;
+          p.y += 150;
           this.gap = 0;
         }
         if (frames % 236 === 0) {
-          p.y -= 100;
-          this.gap = 100;
+          p.y -= 150;
+          this.gap = 150;
 
         }
       }
@@ -370,7 +419,6 @@ const obstacle = {
         this.position.shift();
         score.current += 1;
       };
-
     };
   },
 
@@ -381,8 +429,8 @@ const obstacle = {
 };
 
 const startScreen = {
-  w: 130,
-  h: 130,
+  w: 50,
+  h: 50,
   x: 150,
   y: canvas.height / 2,
 
@@ -390,28 +438,28 @@ const startScreen = {
     if (state.current === state.start) {
       ctx.font = '20px "Press Start 2P"';
       ctx.fillStyle = 'white'
-      ctx.fillText('CLICK TO START THE GAME', this.x, this.y)
+      ctx.fillText('START THE GAME', this.x, this.y)
+
+      ctx.drawImage(playButtonImg, 260, 150, this.w, this.h)
+
     }
   }
 };
 
 const gameOverScreen = {
-  w: 250,
-  h: 150,
-  x1: 250,
-  y1: 250,
-  x2: 220,
-  y2: 300,
+  w: 70,
+  h: 70,
+  x: 200,
+  y: 250,
+
 
   draw() {
     if (state.current == state.over) {
       ctx.font = '35px "Press Start 2P"';
       ctx.fillStyle = 'white'
-      ctx.fillText('GAME OVER', this.x1, this.y1)
+      ctx.fillText('GAME OVER', this.x, this.y)
 
-      ctx.font = '20px "Press Start 2P"';
-      ctx.fillStyle = 'white'
-      ctx.fillText('CLICK TO PLAY AGAIN', this.x2, this.y2)
+      ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)
     }
   }
 };
@@ -449,6 +497,44 @@ const levelUpStartScreen = {
   }
 };
 
+
+// dancingCharacter = {
+//   animation: [
+//   { sX: 0, sY: 337},
+//   { sX: 23, sY: 337},
+//   { sX: 46, sY: 337},
+//   { sX: 69, sY: 337},
+//   { sX: 92, sY: 337},
+//   { sX: 115, sY: 337},
+// ],
+
+// x: 50,
+// y: 160,
+// w: 17,
+// h: 50,
+
+// frame: 0,
+
+
+// draw() {
+//   if(state.current === state.startLevelTwo){
+//   let dancingCharacter = this.animation[this.frame]
+//   ctx.drawImage(moonWalkImg, dancingCharacter.sX, dancingCharacter.sY, this.w, this.h, this.x, this.y, this.w, this.h)
+// }
+// },
+
+// update() {
+//     if (frames % 15 === 0) {
+//       this.frame += 1;
+//     }
+//     if (this.frame === this.animation.length) {
+//       this.frame = 0;
+//     }
+
+// }
+// };
+
+
 const levelLabel = {
   w: 100,
   h: 100,
@@ -479,9 +565,9 @@ const levelLabel = {
 const winScreen = {
   w: 250,
   h: 150,
-  x1: 150,
+  x1: 100,
   y1: 250,
-  x2: 260,
+  x2: 210,
   y2: 300,
 
   draw() {
@@ -510,6 +596,7 @@ function draw() {
   levelUpStartScreen.draw();
   winScreen.draw();
   levelLabel.draw();
+  // dancingCharacter.draw();
 };
 
 
@@ -519,6 +606,9 @@ function update() {
   background.update();
   obstacle.update();
   score.update();
+  
+  // dancingCharacter.update();
+
 
 };
 
@@ -532,8 +622,10 @@ function loop() {
 };
 
 
-window.onload = function () {
+window.onload = function () {  
   loop();
+  messagetxt.type();
+  
   document.onkeydown = function (e) {
     if (e.keyCode === 38) {
       if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {

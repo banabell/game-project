@@ -3,17 +3,46 @@
 body {
   background-color: black;
   display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .scoreBoard  {
-  color: #90AEAE;
+  color: white;
   text-align: center;
   font-family: 'Press Start 2P';
+  display: flex;
+  align-items: center;
 }
 
 .scoreBoard span {
-  font-size: 50px;
+  font-size: 35px;
+  margin-left: 35px;
 }
 
+#message {
+  position: relative;
+  color: white;
+  font-family: 'Press Start 2P';
+  font-size: 20px;
+  
+}
 
+#message::after{
+  position: absolute;
+  content: "";
+  width: 1px;
+  height: 25px;
+  border-right: 2px solid white;
+  right: -5px;
+  animation: blink 0.5s infinite ease;
+}
 
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
