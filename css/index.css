@@ -14,6 +14,7 @@ body {
   display: flex;
   align-items: center;
   border: 10px bold white;
+  position: fixed;
 }
 
 .scoreBoard span {

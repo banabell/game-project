@@ -23,7 +23,6 @@ const state = {
 canvas.onclick = function (e) {
   switch (state.current) {
     case state.start: state.current = state.gameLevelOne;
-    document.getElementById('message').innerHTML = "";
       break;
     case state.over:
       score.reset();
@@ -31,7 +30,6 @@ canvas.onclick = function (e) {
       obstacle.reset();
       state.current = state.start;
       frames = 0;
-      document.getElementById('message').innerHTML = "";
       break;
     case state.startLevelTwo:
       score.current = score.beginLevelTwo;
@@ -43,6 +41,7 @@ canvas.onclick = function (e) {
       break;
     case state.startLevelThree:
       score.current = score.beginLevelThree;
+      scoreCounterSound.play();
       state.current = state.gameLevelThree;
       score.best = Math.max(score.current, score.best);
       localStorage.setItem('best', score.best); 
@@ -92,6 +91,21 @@ levelUpImg.src = "./img/levelUp.png";
 const winnerImg = new Image();
 winnerImg.src = "./img/winner.png";
 
+// LOAD OBSTACLE BUMP MUSIC
+const bump = new Audio();
+bump.src = "./audio/bump.wav"
+
+// LOAD LEVEL UP MUSIC
+const levelUpSound = new Audio();
+levelUpSound.src = "./audio/levelUp.wav";
+
+// LOAD GAME OVER MUSIC
+const gameOverSound = new Audio();
+gameOverSound.src = "./audio/gameover.wav";
+
+// LOAD SCORE COUNTER MUSIC
+const scoreCounterSound = new Audio();
+scoreCounterSound.src = "./audio/scoreCounter.wav";
 
 
 // SCORE (DOM)
@@ -251,6 +265,7 @@ const mainCharacter = {
       if (this.y + 50 >= canvas.height) {
         this.y === canvas.height;
         state.current = state.over
+        gameOverSound.play();
       }
     }
   },
@@ -348,6 +363,7 @@ const obstacle = {
         if (frames % 240 === 0) {
           p.y += 150
           this.gap = 0;
+          bump.play();
         }
         if (frames % 245 === 0) {
           p.y -= 150;
@@ -362,6 +378,7 @@ const obstacle = {
         if (frames % 242 === 0) {
           p.y += 150;
           this.gap = 0;
+          bump.play();
 
         }
         if (frames % 246 === 0) {
@@ -376,6 +393,7 @@ const obstacle = {
         if (frames % 235 === 0) {
           p.y += 150;
           this.gap = 0;
+          bump.play();
         }
         if (frames % 236 === 0) {
           p.y -= 150;
@@ -408,11 +426,15 @@ const obstacle = {
       // DETECT COLLISION WITH TOP OBSTACLE
       if (characterRight > tObstacleLeft && characterLeft < tObstacleRight && characterBottom > tObstacleTop && characterTop < tObstacleBottom) {
         state.current = state.over;
+        gameOverSound.play();
+        
       }
 
       // DETECT COLLISION WITH BOTTOM OBSTACLE
       if (characterRight > bObstacleLeft && characterLeft < bObstacleRight && characterBottom > bObstacleTop && characterTop < bObstacleBottom) {
         state.current = state.over;
+        gameOverSound.play();
+       
       }
 
       // DELETE OBSTACLE FROM POSITION ARRAY WHEN OFF CANVAS
@@ -421,6 +443,7 @@ const obstacle = {
         this.position.shift();
         
         score.current += 1;
+        scoreCounterSound.play();
         score.best = Math.max(score.current, score.best);
         localStorage.setItem('best', score.best);  
       };
@@ -442,11 +465,10 @@ const startScreen = {
   draw() {
     if (state.current === state.start) {
       ctx.font = '20px "Press Start 2P"';
-      ctx.fillStyle = 'white'
-      ctx.fillText('START THE GAME', this.x, this.y)
-
-      ctx.drawImage(playButtonImg, 260, 150, this.w, this.h)
-
+      ctx.fillStyle = 'white';
+      ctx.fillText('START THE GAME', this.x, this.y);
+      ctx.drawImage(playButtonImg, 260, 150, this.w, this.h);
+      // ctx.drawImage(speechBubbleImg, 100, 100, 100, 100);
     }
   }
 };
@@ -463,12 +485,9 @@ const gameOverScreen = {
       ctx.font = '35px "Press Start 2P"';
       ctx.fillStyle = 'white'
       ctx.fillText('GAME OVER', this.x, this.y)
-
-      ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)
-    }
-  },
-
- 
+      ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)      
+    }    
+  }, 
 };
 
 const levelUpStartScreen = {
@@ -481,6 +500,7 @@ const levelUpStartScreen = {
   draw() {
     if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
       ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
+      levelUpSound.play();
     }
   }
 };
@@ -527,7 +547,7 @@ const levelLabel = {
   w: 100,
   h: 100,
   x: 0,
-  y: 20,
+  y: 490,
 
   draw() {
     if (state.current === state.gameLevelOne) {
@@ -594,12 +614,6 @@ function update() {
   background.update();
   obstacle.update();
   score.update();
-  
-
-
-
-  // dancingCharacter.update();
-
 
 };
 
