@@ -23,6 +23,7 @@ const state = {
 canvas.onclick = function (e) {
   switch (state.current) {
     case state.start: state.current = state.gameLevelOne;
+    document.getElementById('message').innerHTML = "";
       break;
     case state.over:
       score.reset();
@@ -30,16 +31,21 @@ canvas.onclick = function (e) {
       obstacle.reset();
       state.current = state.start;
       frames = 0;
+      document.getElementById('message').innerHTML = "";
       break;
     case state.startLevelTwo:
       score.current = score.beginLevelTwo;
       state.current = state.gameLevelTwo;
+      score.best = Math.max(score.current, score.best);
+      localStorage.setItem('best', score.best); 
       mainCharacter.reset();
       obstacle.reset();
       break;
     case state.startLevelThree:
       score.current = score.beginLevelThree;
       state.current = state.gameLevelThree;
+      score.best = Math.max(score.current, score.best);
+      localStorage.setItem('best', score.best); 
       mainCharacter.reset();
       obstacle.reset();
       break;
@@ -86,13 +92,12 @@ levelUpImg.src = "./img/levelUp.png";
 const winnerImg = new Image();
 winnerImg.src = "./img/winner.png";
 
-// LOAD MOONWALK DANCE SPRITE
-const moonWalkImg = new Image();
-moonWalkImg.src = "./img/moonwalk.png";
+
 
 // SCORE (DOM)
 const score = {
   current: 0,
+  best: parseInt(localStorage.getItem('best')) || 0,
   endLevelOne: 3,
   beginLevelTwo: 20,
   endLevelTwo: 21,
@@ -101,8 +106,11 @@ const score = {
 
   update() {
     // UPDATE SCOREBOARD IN DOM
-    let scoreboard = document.getElementById('userScore');
-    scoreboard.innerHTML = this.current;
+    let currentScore = document.getElementById('currentScore');
+    currentScore.innerHTML = this.current;
+
+    let bestScore = document.getElementById('bestScore');
+    bestScore .innerHTML = this.best;
 
     // CHANGE TO LEVEL 2 STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelOne && this.current < this.beginLevelTwo) {
@@ -127,36 +135,30 @@ const score = {
 
 
 
- // Messages (DOM)
- const messagetxt = {
-   messages: ["hello", "you"],
-   i: 0,
-   j: 0,
-   currentMessage: '',
-   letter: '',
+// MESSAGES(DOM) TO DO: SHOW AT GAME OVER STATE ONLY
+// const messageTxt = {
+//   messages: ["Try again. You'll figure this out", "Give it another try. You got this"],
+//   randomMessage: '',
+//   j: 0,
+ 
+
+//   createRandomMessage() {
+//     let randonIndex = Math.floor(Math.random() * messageTxt.messages.length);
+//     messageTxt.randomMessage = messageTxt.messages[randonIndex]
+//   }, 
+
+
+//   typing() {
+//       if (messageTxt.j < messageTxt.randomMessage.length) {
+//         document.getElementById('message').innerHTML += messageTxt.randomMessage.charAt(messageTxt.j);
+//         messageTxt.j++
+//         setTimeout(messageTxt.typing, 200)
+//       }
+      
+//     }
   
 
-   type(){
-     if(messagetxt.i === messagetxt.messages.length){
-      messagetxt.i = 0;
-     };
-
-     messagetxt.currentMessage = messagetxt.messages[messagetxt.i];
-     messagetxt.letter = messagetxt.currentMessage.slice(0, messagetxt.j++);
-
-     document.getElementById('message').innerHTML = messagetxt.letter;
-
-     if(messagetxt.letter.length === messagetxt.currentMessage.length){
-      messagetxt.i  += 1;
-      messagetxt.j = 0;
-     }
-
-  
-     setTimeout(messagetxt.type, 400)
-   }
-    
-};
-
+// };
 
 // BACKGROUND
 const background = {
@@ -417,7 +419,10 @@ const obstacle = {
       // INCREASE SCORE WHEN OBSTACLE OFF CANVAS
       if (p.x + this.w <= 0) {
         this.position.shift();
+        
         score.current += 1;
+        score.best = Math.max(score.current, score.best);
+        localStorage.setItem('best', score.best);  
       };
     };
   },
@@ -461,38 +466,21 @@ const gameOverScreen = {
 
       ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)
     }
-  }
+  },
+
+ 
 };
 
 const levelUpStartScreen = {
   w: 250,
   h: 150,
-  x1: 250,
-  y1: 250,
-  x2: 80,
-  y2: 300,
+  x: 250,
+  y: 150,
+ 
 
   draw() {
-    if (state.current === state.startLevelTwo) {
-      // ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
-      ctx.font = '35px "Press Start 2P"';
-      ctx.fillStyle = 'white'
-      ctx.fillText('AMAZING!', this.x1, this.y1)
-
-      ctx.font = '20px "Press Start 2P"';
-      ctx.fillStyle = 'white'
-      ctx.fillText('CLICK TO MOVE TO THE NEXT LEVEL', this.x2, this.y2)
-    }
-
-    if (state.current === state.startLevelThree) {
-      // ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
-      ctx.font = '30px "Press Start 2P"';
-      ctx.fillStyle = 'white'
-      ctx.fillText('WOW.YOU ROCK!', this.x1, this.y1)
-
-      ctx.font = '20px "Press Start 2P"';
-      ctx.fillStyle = 'white'
-      ctx.fillText('CLICK TO MOVE TO THE FINAL LEVEL', this.x2, this.y2)
+    if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
+      ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
     }
   }
 };
@@ -607,6 +595,9 @@ function update() {
   obstacle.update();
   score.update();
   
+
+
+
   // dancingCharacter.update();
 
 
@@ -622,9 +613,8 @@ function loop() {
 };
 
 
-window.onload = function () {  
+window.onload = function () {
   loop();
-  messagetxt.type();
   
   document.onkeydown = function (e) {
     if (e.keyCode === 38) {

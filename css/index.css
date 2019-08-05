@@ -13,6 +13,7 @@ body {
   font-family: 'Press Start 2P';
   display: flex;
   align-items: center;
+  border: 10px bold white;
 }
 
 .scoreBoard span {
@@ -20,15 +21,19 @@ body {
   margin-left: 35px;
 }
 
+#currentScore {
+  margin-right: 50px;
+}
+
 #message {
   position: relative;
   color: white;
   font-family: 'Press Start 2P';
-  font-size: 20px;
+  font-size: 15px;
   
 }
 
-#message::after{
+/* #message::after{
   position: absolute;
   content: "";
   width: 1px;
@@ -36,13 +41,13 @@ body {
   border-right: 2px solid white;
   right: -5px;
   animation: blink 0.5s infinite ease;
-}
+} */
 
-@keyframes blink {
+/* @keyframes blink {
   0% {
     opacity: 0;
   }
   100% {
     opacity: 1;
   }
-}
+} */
