@@ -42,9 +42,9 @@ body {
   border-right: 2px solid white;
   right: -5px;
   animation: blink 0.5s infinite ease;
-} */
+} 
 
-/* @keyframes blink {
+ @keyframes blink {
   0% {
     opacity: 0;
   }

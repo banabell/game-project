@@ -22,7 +22,8 @@ const state = {
 // ONCLICK EVENT ON CANVAS
 canvas.onclick = function (e) {
   switch (state.current) {
-    case state.start: state.current = state.gameLevelOne;
+    case state.start: state.current = state.gameLevelOne; backgroundSound.play();
+    document.getElementById('message').innerHTML = "";
       break;
     case state.over:
       score.reset();
@@ -33,6 +34,7 @@ canvas.onclick = function (e) {
       break;
     case state.startLevelTwo:
       score.current = score.beginLevelTwo;
+      scoreCounterSound.play();
       state.current = state.gameLevelTwo;
       score.best = Math.max(score.current, score.best);
       localStorage.setItem('best', score.best); 
@@ -41,7 +43,6 @@ canvas.onclick = function (e) {
       break;
     case state.startLevelThree:
       score.current = score.beginLevelThree;
-      scoreCounterSound.play();
       state.current = state.gameLevelThree;
       score.best = Math.max(score.current, score.best);
       localStorage.setItem('best', score.best); 
@@ -93,11 +94,13 @@ winnerImg.src = "./img/winner.png";
 
 // LOAD OBSTACLE BUMP MUSIC
 const bump = new Audio();
-bump.src = "./audio/bump.wav"
+bump.src = "./audio/bump.wav";
+
 
 // LOAD LEVEL UP MUSIC
 const levelUpSound = new Audio();
 levelUpSound.src = "./audio/levelUp.wav";
+levelUpSound.loop = false;
 
 // LOAD GAME OVER MUSIC
 const gameOverSound = new Audio();
@@ -106,6 +109,11 @@ gameOverSound.src = "./audio/gameover.wav";
 // LOAD SCORE COUNTER MUSIC
 const scoreCounterSound = new Audio();
 scoreCounterSound.src = "./audio/scoreCounter.wav";
+
+// LOAD BACKGROUND MUSIC
+const backgroundSound = new Audio();
+backgroundSound.src = "./audio/backgroundMusicEdit.m4a";
+backgroundSound.loop = true;
 
 
 // SCORE (DOM)
@@ -129,7 +137,9 @@ const score = {
     // CHANGE TO LEVEL 2 STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelOne && this.current < this.beginLevelTwo) {
       state.current = state.startLevelTwo;
+  
     }
+  
     // CHANGE TO LEVEL 3 STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelTwo && this.current < this.beginLevelThree) {
       state.current = state.startLevelThree;
@@ -139,7 +149,6 @@ const score = {
     if (obstacle.position.length === 0 && this.current >= this.endLevelThree) {
       state.current = state.win;
     }
-
   },
 
   reset() {
@@ -149,30 +158,31 @@ const score = {
 
 
 
-// MESSAGES(DOM) TO DO: SHOW AT GAME OVER STATE ONLY
-// const messageTxt = {
-//   messages: ["Try again. You'll figure this out", "Give it another try. You got this"],
-//   randomMessage: '',
-//   j: 0,
+// MESSAGES(DOM) TO DO: FIGURE OUT HOW TO SHOW RANDOM MESSAGES AT GAME OVER STATE
+const messageTxt = {
+  messages: ["Welcome to SPACE APE. Enoy the game! - Bana"],
+  randomMessage: '',
+  j: 0,
  
 
-//   createRandomMessage() {
-//     let randonIndex = Math.floor(Math.random() * messageTxt.messages.length);
-//     messageTxt.randomMessage = messageTxt.messages[randonIndex]
-//   }, 
+  createRandomMessage() {
+    let randonIndex = Math.floor(Math.random() * messageTxt.messages.length);
+    messageTxt.randomMessage = messageTxt.messages[randonIndex]
+  }, 
 
 
-//   typing() {
-//       if (messageTxt.j < messageTxt.randomMessage.length) {
-//         document.getElementById('message').innerHTML += messageTxt.randomMessage.charAt(messageTxt.j);
-//         messageTxt.j++
-//         setTimeout(messageTxt.typing, 200)
-//       }
-      
-//     }
-  
-
-// };
+  typing() {
+    if(state.current === state.start){
+      if (messageTxt.j < messageTxt.randomMessage.length) {
+        document.getElementById('message').innerHTML += messageTxt.randomMessage.charAt(messageTxt.j);
+        messageTxt.j++
+        setTimeout(messageTxt.typing, 200)
+      }
+    }
+  }
+};
+messageTxt.createRandomMessage()
+messageTxt.typing()
 
 // BACKGROUND
 const background = {
@@ -363,7 +373,8 @@ const obstacle = {
         if (frames % 240 === 0) {
           p.y += 150
           this.gap = 0;
-          bump.play();
+          bump.play()
+          
         }
         if (frames % 245 === 0) {
           p.y -= 150;
@@ -379,6 +390,7 @@ const obstacle = {
           p.y += 150;
           this.gap = 0;
           bump.play();
+          
 
         }
         if (frames % 246 === 0) {
@@ -394,6 +406,7 @@ const obstacle = {
           p.y += 150;
           this.gap = 0;
           bump.play();
+          
         }
         if (frames % 236 === 0) {
           p.y -= 150;
@@ -426,14 +439,14 @@ const obstacle = {
       // DETECT COLLISION WITH TOP OBSTACLE
       if (characterRight > tObstacleLeft && characterLeft < tObstacleRight && characterBottom > tObstacleTop && characterTop < tObstacleBottom) {
         state.current = state.over;
-        gameOverSound.play();
+        
         
       }
 
       // DETECT COLLISION WITH BOTTOM OBSTACLE
       if (characterRight > bObstacleLeft && characterLeft < bObstacleRight && characterBottom > bObstacleTop && characterTop < bObstacleBottom) {
         state.current = state.over;
-        gameOverSound.play();
+        
        
       }
 
@@ -485,9 +498,17 @@ const gameOverScreen = {
       ctx.font = '35px "Press Start 2P"';
       ctx.fillStyle = 'white'
       ctx.fillText('GAME OVER', this.x, this.y)
-      ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)      
+      ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)    
     }    
   }, 
+
+  sound(){
+    if(state.current === state.over){
+    gameOverSound.play();
+    gameOverSound.loop = false;
+  }
+},
+  
 };
 
 const levelUpStartScreen = {
@@ -502,7 +523,14 @@ const levelUpStartScreen = {
       ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
       levelUpSound.play();
     }
-  }
+  },
+
+  sound() {
+    if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
+      levelUpSound.play();
+      levelUpSound.loop = false;
+    }
+  },
 };
 
 
@@ -594,6 +622,8 @@ const winScreen = {
 };
 
 
+
+
 // Draw
 function draw() {
   background.draw();
@@ -604,7 +634,6 @@ function draw() {
   levelUpStartScreen.draw();
   winScreen.draw();
   levelLabel.draw();
-  // dancingCharacter.draw();
 };
 
 
@@ -617,18 +646,33 @@ function update() {
 
 };
 
+
+function sound() {
+  gameOverScreen.sound();
+  levelUpStartScreen.sound();
+
+  // bumping obctacle sound in obstacle object
+  // score sound in obstacle object
+}
+
 // Loop
 function loop() {
   update();
   draw();
+  sound();
   frames++;
 
   requestAnimationFrame(loop)
 };
 
 
+
+
 window.onload = function () {
   loop();
+  messageTxt.createRandomMessage();
+  messageTxt.typing();
+  
   
   document.onkeydown = function (e) {
     if (e.keyCode === 38) {
