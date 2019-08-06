@@ -22,8 +22,9 @@ const state = {
 // ONCLICK EVENT ON CANVAS
 canvas.onclick = function (e) {
   switch (state.current) {
-    case state.start: state.current = state.gameLevelOne; backgroundSound.play();
-    document.getElementById('message').innerHTML = "";
+    case state.start: state.current = state.gameLevelOne; 
+      document.getElementById('message').innerHTML = "";
+      // backgroundSound.play();
       break;
     case state.over:
       score.reset();
@@ -103,18 +104,24 @@ levelUpSound.src = "./audio/levelUp.wav";
 levelUpSound.loop = false;
 
 // LOAD GAME OVER MUSIC
-const gameOverSound = new Audio();
-gameOverSound.src = "./audio/gameover.wav";
+// const gameOverSound = new Audio();
+// gameOverSound.src = "./audio/gameover.wav";
 
 // LOAD SCORE COUNTER MUSIC
 const scoreCounterSound = new Audio();
 scoreCounterSound.src = "./audio/scoreCounter.wav";
 
 // LOAD BACKGROUND MUSIC
-const backgroundSound = new Audio();
-backgroundSound.src = "./audio/backgroundMusicEdit.m4a";
-backgroundSound.loop = true;
+const backgroundSound = new Howl({
+  src: ["./audio/backgroundTest.mp3"],
+  loop: true,
+});
 
+// LOAD GAME OVER IMAGE
+const gameOverSound = new Howl({
+  src: ["./audio/gameover.wav"],
+  loop: false,
+});
 
 // SCORE (DOM)
 const score = {
@@ -160,7 +167,7 @@ const score = {
 
 // MESSAGES(DOM) TO DO: FIGURE OUT HOW TO SHOW RANDOM MESSAGES AT GAME OVER STATE
 const messageTxt = {
-  messages: ["Welcome to SPACE APE. Enoy the game! - Bana"],
+  messages: ["Welcome to SPACE APE. Enoy the game!"],
   randomMessage: '',
   j: 0,
  
@@ -273,9 +280,11 @@ const mainCharacter = {
       this.speed += this.gravity;
       this.y += this.speed;
       if (this.y + 50 >= canvas.height) {
-        this.y === canvas.height;
-        state.current = state.over
-        gameOverSound.play();
+        this.y === canvas.height;//????
+        if (state.current !== state.over) {
+          gameOverSound.play();
+        }
+        state.current = state.over;
       }
     }
   },
@@ -438,13 +447,17 @@ const obstacle = {
 
       // DETECT COLLISION WITH TOP OBSTACLE
       if (characterRight > tObstacleLeft && characterLeft < tObstacleRight && characterBottom > tObstacleTop && characterTop < tObstacleBottom) {
+        if (state.current !== state.over) {
+          gameOverSound.play();
+        }
         state.current = state.over;
-        
-        
       }
 
       // DETECT COLLISION WITH BOTTOM OBSTACLE
       if (characterRight > bObstacleLeft && characterLeft < bObstacleRight && characterBottom > bObstacleTop && characterTop < bObstacleBottom) {
+        if (state.current !== state.over) {
+          gameOverSound.play();
+        }
         state.current = state.over;
         
        
@@ -501,14 +514,6 @@ const gameOverScreen = {
       ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)    
     }    
   }, 
-
-  sound(){
-    if(state.current === state.over){
-    gameOverSound.play();
-    gameOverSound.loop = false;
-  }
-},
-  
 };
 
 const levelUpStartScreen = {
@@ -521,14 +526,6 @@ const levelUpStartScreen = {
   draw() {
     if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
       ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
-      levelUpSound.play();
-    }
-  },
-
-  sound() {
-    if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
-      levelUpSound.play();
-      levelUpSound.loop = false;
     }
   },
 };
@@ -647,26 +644,14 @@ function update() {
 };
 
 
-function sound() {
-  gameOverScreen.sound();
-  levelUpStartScreen.sound();
-
-  // bumping obctacle sound in obstacle object
-  // score sound in obstacle object
-}
-
 // Loop
 function loop() {
   update();
   draw();
-  sound();
   frames++;
 
   requestAnimationFrame(loop)
 };
-
-
-
 
 window.onload = function () {
   loop();
