@@ -22,7 +22,7 @@ const state = {
 // ONCLICK EVENT ON CANVAS
 canvas.onclick = function (e) {
   switch (state.current) {
-    case state.start: state.current = state.gameLevelOne; backgroundSound.play();
+    case state.start: state.current = state.gameLevelOne; frames = 0; backgroundSound.play();
       document.getElementById('message').innerHTML = "";
       // backgroundSound.play();
       break;
@@ -93,6 +93,7 @@ levelUpImg.src = "./img/levelUp.png";
 const winnerImg = new Image();
 winnerImg.src = "./img/winner.png";
 
+
 // LOAD OBSTACLE BUMP MUSIC
 const bump = new Audio();
 bump.src = "./audio/bump.wav";
@@ -116,6 +117,13 @@ const backgroundSound = new Audio();
 backgroundSound.src = "./audio/backgroundSoundLong.wav";
 backgroundSound.loop = true;
 backgroundSound.volume = 0.5;
+
+// LOAD WINNING SOUND
+const winningSound = new Audio();
+winningSound.src = "./audio/winning.mp3";
+
+
+
 
 // SCORE (DOM)
 const score = {
@@ -154,7 +162,19 @@ const score = {
 
     // CHANGE TO WIN STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelThree) {
-      state.current = state.win;
+      if(state.current != state.win){
+        winningSound.play();
+        backgroundSound.pause();
+        state.current = state.win;
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: {
+              y: 0.6
+          }
+      });
+      }
+      
     }
   },
 
@@ -280,6 +300,14 @@ const mainCharacter = {
       this.speed += this.gravity;
       this.y += this.speed;
       if (this.y + this.h + 20  >= canvas.height) {
+       
+        if (state.current !== state.over) {
+          gameOverSound.play();
+        }
+        state.current = state.over;
+      }
+
+      if (this.x < 0) {
        
         if (state.current !== state.over) {
           gameOverSound.play();
@@ -530,44 +558,6 @@ const levelUpStartScreen = {
   },
 };
 
-
-// dancingCharacter = {
-//   animation: [
-//   { sX: 0, sY: 337},
-//   { sX: 23, sY: 337},
-//   { sX: 46, sY: 337},
-//   { sX: 69, sY: 337},
-//   { sX: 92, sY: 337},
-//   { sX: 115, sY: 337},
-// ],
-
-// x: 50,
-// y: 160,
-// w: 17,
-// h: 50,
-
-// frame: 0,
-
-
-// draw() {
-//   if(state.current === state.startLevelTwo){
-//   let dancingCharacter = this.animation[this.frame]
-//   ctx.drawImage(moonWalkImg, dancingCharacter.sX, dancingCharacter.sY, this.w, this.h, this.x, this.y, this.w, this.h)
-// }
-// },
-
-// update() {
-//     if (frames % 15 === 0) {
-//       this.frame += 1;
-//     }
-//     if (this.frame === this.animation.length) {
-//       this.frame = 0;
-//     }
-
-// }
-// };
-
-
 const levelLabel = {
   w: 100,
   h: 100,
@@ -595,24 +585,29 @@ const levelLabel = {
   },
 };
 
+
+
 const winScreen = {
   w: 250,
   h: 150,
   x1: 100,
   y1: 250,
-  x2: 210,
+  x2: 390,
   y2: 300,
 
   draw() {
     if (state.current === state.win) {
-      // ctx.drawImage(winnerImg, this.x, this.y, this.w, this.h)
+      // ctx.drawImage(winnerImg, this.x1, this.y1, this.w, this.h)
+      
       ctx.font = '30px "Press Start 2P"';
       ctx.fillStyle = 'white'
       ctx.fillText('INCREDIBLE! YOU WON!', this.x1, this.y1)
 
-      ctx.font = '20px "Press Start 2P"';
-      ctx.fillStyle = 'white'
-      ctx.fillText('CLICK TO PLAY AGAIN', this.x2, this.y2)
+      ctx.drawImage(playButtonImg, this.x2, this.y2, 50, 50);
+      // ctx.font = '20px "Press Start 2P"';
+      // ctx.fillStyle = 'white'
+      // ctx.fillText('CLICK TO PLAY AGAIN', this.x2, this.y2)
+        
 
     }
   }
@@ -631,6 +626,7 @@ function draw() {
   levelUpStartScreen.draw();
   winScreen.draw();
   levelLabel.draw();
+  
 };
 
 
@@ -640,6 +636,8 @@ function update() {
   background.update();
   obstacle.update();
   score.update();
+  
+  
 
 };
 
