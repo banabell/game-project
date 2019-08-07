@@ -1,4 +1,5 @@
 
+
 // CANVAS
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -164,7 +165,6 @@ const score = {
     if (obstacle.position.length === 0 && this.current >= this.endLevelThree) {
       if(state.current != state.win){
         winningSound.play();
-        backgroundSound.pause();
         state.current = state.win;
         confetti({
           particleCount: 100,
@@ -511,17 +511,17 @@ const obstacle = {
 };
 
 const startScreen = {
-  w: 50,
-  h: 50,
-  x: 150,
-  y: canvas.height / 2,
+  w: 100,
+  h: 100,
+  x: 350,
+  y: 150,
 
   draw() {
     if (state.current === state.start) {
-      ctx.font = '20px "Press Start 2P"';
-      ctx.fillStyle = 'white';
-      ctx.fillText('START THE GAME', this.x, this.y);
-      ctx.drawImage(playButtonImg, 260, 150, this.w, this.h);
+      // ctx.font = '20px "Press Start 2P"';
+      // ctx.fillStyle = 'white';
+      // ctx.fillText('START THE GAME', this.x, this.y);
+      ctx.drawImage(playButtonImg, this.x, this.y, this.w, this.h);
       // ctx.drawImage(speechBubbleImg, 100, 100, 100, 100);
     }
   }

@@ -5,7 +5,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Press Start 2P';
 }
+
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 
 .scoreBoard  {
   color: white;
@@ -14,12 +22,19 @@ body {
   display: flex;
   align-items: center;
   border: 10px bold white;
-  position: fixed;
+  /* position: fixed; */
 }
 
+h1 {
+  color: white;
+  margin-bottom: 35px;
+}
 .scoreBoard span {
-  font-size: 35px;
+  font-size: 20px;
   margin-left: 35px;
+}
+.scoreBoard h2 {
+  font-size: 20px
 }
 
 #currentScore {
@@ -52,3 +67,5 @@ body {
     opacity: 1;
   }
 } */
+
+
