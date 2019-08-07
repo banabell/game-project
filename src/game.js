@@ -22,7 +22,7 @@ const state = {
 // ONCLICK EVENT ON CANVAS
 canvas.onclick = function (e) {
   switch (state.current) {
-    case state.start: state.current = state.gameLevelOne; 
+    case state.start: state.current = state.gameLevelOne; backgroundSound.play();
       document.getElementById('message').innerHTML = "";
       // backgroundSound.play();
       break;
@@ -96,7 +96,7 @@ winnerImg.src = "./img/winner.png";
 // LOAD OBSTACLE BUMP MUSIC
 const bump = new Audio();
 bump.src = "./audio/bump.wav";
-
+bump.volume = 1;
 
 // LOAD LEVEL UP MUSIC
 const levelUpSound = new Audio();
@@ -104,24 +104,18 @@ levelUpSound.src = "./audio/levelUp.wav";
 levelUpSound.loop = false;
 
 // LOAD GAME OVER MUSIC
-// const gameOverSound = new Audio();
-// gameOverSound.src = "./audio/gameover.wav";
+const gameOverSound = new Audio();
+gameOverSound.src = "./audio/gameover.wav";
 
 // LOAD SCORE COUNTER MUSIC
 const scoreCounterSound = new Audio();
 scoreCounterSound.src = "./audio/scoreCounter.wav";
 
 // LOAD BACKGROUND MUSIC
-const backgroundSound = new Howl({
-  src: ["./audio/backgroundTest.mp3"],
-  loop: true,
-});
-
-// LOAD GAME OVER IMAGE
-const gameOverSound = new Howl({
-  src: ["./audio/gameover.wav"],
-  loop: false,
-});
+const backgroundSound = new Audio();
+backgroundSound.src = "./audio/backgroundSoundLong.wav";
+backgroundSound.loop = true;
+backgroundSound.volume = 0.5;
 
 // SCORE (DOM)
 const score = {
@@ -143,12 +137,18 @@ const score = {
 
     // CHANGE TO LEVEL 2 STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelOne && this.current < this.beginLevelTwo) {
+      if(state.current != state.startLevelTwo){
+        levelUpSound.play()
+      }
       state.current = state.startLevelTwo;
   
     }
   
     // CHANGE TO LEVEL 3 STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelTwo && this.current < this.beginLevelThree) {
+      if(state.current != state.startLevelThree){
+        levelUpSound.play()
+      }
       state.current = state.startLevelThree;
     }
 
@@ -237,7 +237,7 @@ const mainCharacter = {
   ],
 
   x: 50,
-  y: 160,
+  y: 150,
   w: 50,
   h: 70,
 
@@ -279,8 +279,8 @@ const mainCharacter = {
     if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo || state.current === state.gameLevelThree) {
       this.speed += this.gravity;
       this.y += this.speed;
-      if (this.y + 50 >= canvas.height) {
-        this.y === canvas.height;//????
+      if (this.y + this.h + 20  >= canvas.height) {
+       
         if (state.current !== state.over) {
           gameOverSound.play();
         }
