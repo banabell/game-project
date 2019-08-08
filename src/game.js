@@ -25,7 +25,6 @@ canvas.onclick = function (e) {
   switch (state.current) {
     case state.start: state.current = state.gameLevelOne; frames = 0; backgroundSound.play();
       document.getElementById('message').innerHTML = "";
-      // backgroundSound.play();
       break;
     case state.over:
       score.reset();
@@ -35,19 +34,21 @@ canvas.onclick = function (e) {
       frames = 0;
       break;
     case state.startLevelTwo:
+      backgroundSound.play();
       score.current = score.beginLevelTwo;
       scoreCounterSound.play();
       state.current = state.gameLevelTwo;
       score.best = Math.max(score.current, score.best);
-      localStorage.setItem('best', score.best); 
+      localStorage.setItem('best', score.best);
       mainCharacter.reset();
       obstacle.reset();
       break;
     case state.startLevelThree:
+      backgroundSound.play();
       score.current = score.beginLevelThree;
       state.current = state.gameLevelThree;
       score.best = Math.max(score.current, score.best);
-      localStorage.setItem('best', score.best); 
+      localStorage.setItem('best', score.best);
       mainCharacter.reset();
       obstacle.reset();
       break;
@@ -59,7 +60,6 @@ canvas.onclick = function (e) {
       break;
   }
 };
-
 
 
 // LOAD BACKGROUND IMAGE
@@ -78,10 +78,6 @@ retartButtonImg.src = "./img/restart.png"
 const mainCharacterImg = new Image();
 mainCharacterImg.src = "./img/ApeanautSprite.png"
 
-// LOAD GAME OVER IMAGE
-const gameOverImg = new Image();
-gameOverImg.src = "./img/gameover.png";
-
 // LOAD OBSTACLE
 const obstacleImg = new Image();
 obstacleImg.src = "./img/satellite3.png";
@@ -89,10 +85,6 @@ obstacleImg.src = "./img/satellite3.png";
 // LOAD IMAGE FOR LEVEL SCREENS
 const levelUpImg = new Image();
 levelUpImg.src = "./img/levelUp.png";
-
-// LOAD IMAGE FOR WIN SCREEN
-const winnerImg = new Image();
-winnerImg.src = "./img/winner.png";
 
 
 // LOAD OBSTACLE BUMP MUSIC
@@ -124,8 +116,6 @@ const winningSound = new Audio();
 winningSound.src = "./audio/winning.mp3";
 
 
-
-
 // SCORE (DOM)
 const score = {
   current: 0,
@@ -142,39 +132,41 @@ const score = {
     currentScore.innerHTML = this.current;
 
     let bestScore = document.getElementById('bestScore');
-    bestScore .innerHTML = this.best;
+    bestScore.innerHTML = this.best;
 
     // CHANGE TO LEVEL 2 STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelOne && this.current < this.beginLevelTwo) {
-      if(state.current != state.startLevelTwo){
+      if (state.current != state.startLevelTwo) {
         levelUpSound.play()
       }
       state.current = state.startLevelTwo;
-  
+      backgroundSound.pause();
+
     }
-  
+
     // CHANGE TO LEVEL 3 STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelTwo && this.current < this.beginLevelThree) {
-      if(state.current != state.startLevelThree){
+      if (state.current != state.startLevelThree) {
         levelUpSound.play()
       }
       state.current = state.startLevelThree;
+      backgroundSound.pause();
     }
 
     // CHANGE TO WIN STATE
     if (obstacle.position.length === 0 && this.current >= this.endLevelThree) {
-      if(state.current != state.win){
+      if (state.current != state.win) {
         winningSound.play();
         state.current = state.win;
         confetti({
           particleCount: 100,
           spread: 70,
           origin: {
-              y: 0.6
+            y: 0.6
           }
-      });
+        });
       }
-      
+
     }
   },
 
@@ -185,21 +177,21 @@ const score = {
 
 
 
-// MESSAGES(DOM) TO DO: FIGURE OUT HOW TO SHOW RANDOM MESSAGES AT GAME OVER STATE
+// MESSAGES(DOM) 
 const messageTxt = {
   messages: ["Welcome to SPACE APE. Enoy the game!"],
   randomMessage: '',
   j: 0,
- 
+
 
   createRandomMessage() {
     let randonIndex = Math.floor(Math.random() * messageTxt.messages.length);
     messageTxt.randomMessage = messageTxt.messages[randonIndex]
-  }, 
+  },
 
 
   typing() {
-    if(state.current === state.start){
+    if (state.current === state.start) {
       if (messageTxt.j < messageTxt.randomMessage.length) {
         document.getElementById('message').innerHTML += messageTxt.randomMessage.charAt(messageTxt.j);
         messageTxt.j++
@@ -299,21 +291,37 @@ const mainCharacter = {
     if (state.current === state.gameLevelOne || state.current === state.gameLevelTwo || state.current === state.gameLevelThree) {
       this.speed += this.gravity;
       this.y += this.speed;
-      if (this.y + this.h + 20  >= canvas.height) {
-       
+      if (this.y + this.h + 20 >= canvas.height) {
+
         if (state.current !== state.over) {
           gameOverSound.play();
         }
         state.current = state.over;
+        backgroundSound.pause();
       }
 
+      // GAME OVER IF OFF THE LEFT SIDE OF THE CANVAS
       if (this.x < 0) {
-       
+
         if (state.current !== state.over) {
           gameOverSound.play();
         }
         state.current = state.over;
+        backgroundSound.pause();
       }
+
+      // GAME OVER IF OFF THE TOP OF THE CANVAS / COMMENT OUT FOR DEMO
+
+      // if (this.y < 0) {
+
+      //   if (state.current !== state.over) {
+      //     gameOverSound.play();
+      //   }
+      //   state.current = state.over;
+        // backgroundSound.pause();
+      // }
+
+
     }
   },
 
@@ -411,7 +419,7 @@ const obstacle = {
           p.y += 150
           this.gap = 0;
           bump.play()
-          
+
         }
         if (frames % 245 === 0) {
           p.y -= 150;
@@ -427,7 +435,7 @@ const obstacle = {
           p.y += 150;
           this.gap = 0;
           bump.play();
-          
+
 
         }
         if (frames % 246 === 0) {
@@ -443,7 +451,7 @@ const obstacle = {
           p.y += 150;
           this.gap = 0;
           bump.play();
-          
+
         }
         if (frames % 236 === 0) {
           p.y -= 150;
@@ -479,6 +487,7 @@ const obstacle = {
           gameOverSound.play();
         }
         state.current = state.over;
+        backgroundSound.pause();
       }
 
       // DETECT COLLISION WITH BOTTOM OBSTACLE
@@ -487,19 +496,20 @@ const obstacle = {
           gameOverSound.play();
         }
         state.current = state.over;
-        
-       
+        backgroundSound.pause();
+
+
       }
 
       // DELETE OBSTACLE FROM POSITION ARRAY WHEN OFF CANVAS
       // INCREASE SCORE WHEN OBSTACLE OFF CANVAS
       if (p.x + this.w <= 0) {
         this.position.shift();
-        
+
         score.current += 1;
         scoreCounterSound.play();
         score.best = Math.max(score.current, score.best);
-        localStorage.setItem('best', score.best);  
+        localStorage.setItem('best', score.best);
       };
     };
   },
@@ -539,9 +549,9 @@ const gameOverScreen = {
       ctx.font = '35px "Press Start 2P"';
       ctx.fillStyle = 'white'
       ctx.fillText('GAME OVER', this.x, this.y)
-      ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)    
-    }    
-  }, 
+      ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)
+    }
+  },
 };
 
 const levelUpStartScreen = {
@@ -549,7 +559,7 @@ const levelUpStartScreen = {
   h: 150,
   x: 250,
   y: 150,
- 
+
 
   draw() {
     if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
@@ -598,7 +608,7 @@ const winScreen = {
   draw() {
     if (state.current === state.win) {
       // ctx.drawImage(winnerImg, this.x1, this.y1, this.w, this.h)
-      
+
       ctx.font = '30px "Press Start 2P"';
       ctx.fillStyle = 'white'
       ctx.fillText('INCREDIBLE! YOU WON!', this.x1, this.y1)
@@ -607,7 +617,7 @@ const winScreen = {
       // ctx.font = '20px "Press Start 2P"';
       // ctx.fillStyle = 'white'
       // ctx.fillText('CLICK TO PLAY AGAIN', this.x2, this.y2)
-        
+
 
     }
   }
@@ -626,7 +636,7 @@ function draw() {
   levelUpStartScreen.draw();
   winScreen.draw();
   levelLabel.draw();
-  
+
 };
 
 
@@ -636,8 +646,8 @@ function update() {
   background.update();
   obstacle.update();
   score.update();
-  
-  
+
+
 
 };
 
@@ -655,8 +665,8 @@ window.onload = function () {
   loop();
   messageTxt.createRandomMessage();
   messageTxt.typing();
-  
-  
+
+
   document.onkeydown = function (e) {
     if (e.keyCode === 38) {
       if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
@@ -682,12 +692,13 @@ window.onload = function () {
       }
     };
 
-    // secret key to jump to level 2 (to do: randomize it)
+
+    // secret key to jump to level 2 (just for Demo purposes)
     if (e.keyCode === 50) {
       state.current = state.gameLevelTwo;
       score.current = score.beginLevelTwo
     };
-    // secret key to jump to level 3 (to do: randomize it)
+    // secret key to jump to level 3 (just for demo purposes)
     if (e.keyCode === 51) {
       state.current = state.gameLevelThree;
       score.current = score.beginLevelThree;

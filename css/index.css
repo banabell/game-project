@@ -49,6 +49,10 @@ h1 {
   
 }
 
+button {
+  margin-top: 20px;
+}
+
 /* #message::after{
   position: absolute;
   content: "";
