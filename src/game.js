@@ -1,5 +1,3 @@
-
-
 // CANVAS
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -31,7 +29,8 @@ canvas.onclick = function (e) {
       mainCharacter.reset();
       obstacle.reset();
       state.current = state.start;
-      frames = 0;
+      backgroundSound.currentTime = 0;
+      // frames = 0;
       break;
     case state.startLevelTwo:
       backgroundSound.play();
@@ -57,6 +56,8 @@ canvas.onclick = function (e) {
       mainCharacter.reset();
       obstacle.reset();
       state.current = state.start;
+      backgroundSound.pause();
+      backgroundSound.currentTime = 0;
       break;
   }
 };
@@ -85,7 +86,6 @@ obstacleImg.src = "./img/satellite3.png";
 // LOAD IMAGE FOR LEVEL SCREENS
 const levelUpImg = new Image();
 levelUpImg.src = "./img/levelUp.png";
-
 
 // LOAD OBSTACLE BUMP MUSIC
 const bump = new Audio();
@@ -300,15 +300,15 @@ const mainCharacter = {
         backgroundSound.pause();
       }
 
-      // GAME OVER IF OFF THE LEFT SIDE OF THE CANVAS
-      if (this.x < 0) {
+      // GAME OVER IF OFF THE LEFT SIDE OF THE CANVAS / COMMENT OUT FOR DEMO
+      // if (this.x < 0) {
 
-        if (state.current !== state.over) {
-          gameOverSound.play();
-        }
-        state.current = state.over;
-        backgroundSound.pause();
-      }
+      //   if (state.current !== state.over) {
+      //     gameOverSound.play();
+      //   }
+      //   state.current = state.over;
+      //   backgroundSound.pause();
+      // }
 
       // GAME OVER IF OFF THE TOP OF THE CANVAS / COMMENT OUT FOR DEMO
 
@@ -318,7 +318,8 @@ const mainCharacter = {
       //     gameOverSound.play();
       //   }
       //   state.current = state.over;
-        // backgroundSound.pause();
+      // backgroundSound.pause();
+      
       // }
 
 
@@ -358,9 +359,6 @@ const obstacle = {
   dx: 2,
   dx2: 3,
   dx3: 3.5,
-  dy: 100,
-
-
 
   draw() {
     for (let i = 0; i < this.position.length; i++) {
@@ -624,8 +622,6 @@ const winScreen = {
 };
 
 
-
-
 // Draw
 function draw() {
   background.draw();
@@ -636,7 +632,6 @@ function draw() {
   levelUpStartScreen.draw();
   winScreen.draw();
   levelLabel.draw();
-
 };
 
 
@@ -646,9 +641,6 @@ function update() {
   background.update();
   obstacle.update();
   score.update();
-
-
-
 };
 
 
