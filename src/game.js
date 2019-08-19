@@ -277,6 +277,11 @@ const mainCharacter = {
     }
   },
 
+  resizeGame(){
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
+  },
+
   update() {
     // ANIMATE THE MAIN CHARACTER 
     if (state.current === state.start || state.current === state.gameLevelOne || state.current === state.gameLevelTwo || state.current === state.gameLevelThree) {
@@ -377,6 +382,11 @@ const obstacle = {
       // DRAW BOTTOM OBSTACLE
       ctx.drawImage(obstacleImg, p.x, bottomYP, this.w, this.h)
     }
+  },
+
+  resizeGame(){
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   },
 
   update() {
@@ -541,7 +551,7 @@ const startScreen = {
   },
 
   resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth;
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
     ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
@@ -582,7 +592,7 @@ const levelUpStartScreen = {
   },
 
   resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth;
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
     ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
@@ -614,7 +624,7 @@ const levelLabel = {
   },
 
   resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth;
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
     ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
@@ -658,6 +668,8 @@ function resizeGame(){
   levelUpStartScreen.resizeGame();
   winScreen.resizeGame();
   levelLabel.resizeGame();
+  obstacle.resizeGame();
+  mainCharacter.resizeGame();
 }
 
 
