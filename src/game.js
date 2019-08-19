@@ -541,7 +541,7 @@ const startScreen = {
   },
 
   resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.width = document.documentElement.clientWidth;
     ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
@@ -563,7 +563,7 @@ const gameOverScreen = {
   },
 
   resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.width = document.documentElement.clientWidth;
     ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
@@ -582,7 +582,7 @@ const levelUpStartScreen = {
   },
 
   resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.width = document.documentElement.clientWidth;
     ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
@@ -614,7 +614,7 @@ const levelLabel = {
   },
 
   resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.width = document.documentElement.clientWidth;
     ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
