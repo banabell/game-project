@@ -59,6 +59,12 @@ canvas.onclick = function (e) {
       backgroundSound.pause();
       backgroundSound.currentTime = 0;
       break;
+    case state.gameLevelOne: mainCharacter.moveUp();
+      break;
+    case state.gameLevelTwo: mainCharacter.moveUp();
+      break;
+    case state.gameLevelThree: mainCharacter.moveUp();
+      break;
   }
 };
 
@@ -300,17 +306,17 @@ const mainCharacter = {
         backgroundSound.pause();
       }
 
-      // GAME OVER IF OFF THE LEFT SIDE OF THE CANVAS / COMMENT OUT FOR DEMO
-      // if (this.x < 0) {
+      //GAME OVER IF OFF THE LEFT SIDE OF THE CANVAS 
+      if (this.x < 0) {
 
-      //   if (state.current !== state.over) {
-      //     gameOverSound.play();
-      //   }
-      //   state.current = state.over;
-      //   backgroundSound.pause();
-      // }
+        if (state.current !== state.over) {
+          gameOverSound.play();
+        }
+        state.current = state.over;
+        backgroundSound.pause();
+      }
 
-      // GAME OVER IF OFF THE TOP OF THE CANVAS / COMMENT OUT FOR DEMO
+      //GAME OVER IF OFF THE TOP OF THE CANVAS 
 
       // if (this.y < 0) {
 
@@ -521,17 +527,22 @@ const obstacle = {
 const startScreen = {
   w: 100,
   h: 100,
-  x: 350,
-  y: 150,
+  x: canvas.width/2,
+  y: canvas.height/2,
 
   draw() {
     if (state.current === state.start) {
       // ctx.font = '20px "Press Start 2P"';
       // ctx.fillStyle = 'white';
       // ctx.fillText('START THE GAME', this.x, this.y);
-      ctx.drawImage(playButtonImg, this.x, this.y, this.w, this.h);
+      ctx.drawImage(playButtonImg, this.x - this.w/2, this.y - this.h/2, this.w, this.h);
       // ctx.drawImage(speechBubbleImg, 100, 100, 100, 100);
     }
+  },
+
+  resizeGame(){
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
 
@@ -550,6 +561,11 @@ const gameOverScreen = {
       ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)
     }
   },
+
+  resizeGame(){
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
+  }
 };
 
 const levelUpStartScreen = {
@@ -564,25 +580,30 @@ const levelUpStartScreen = {
       ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
     }
   },
+
+  resizeGame(){
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
+  }
 };
 
 const levelLabel = {
   w: 100,
   h: 100,
-  x: 0,
+  x: 100,
   y: 490,
 
   draw() {
     if (state.current === state.gameLevelOne) {
       ctx.font = '20px "Press Start 2P"';
-      ctx.fillStyle = 'white'
+      ctx.fillStyle = 'white';
       ctx.fillText('Level 1', this.x, this.y)
     };
 
     if (state.current === state.gameLevelTwo) {
       ctx.font = '20px "Press Start 2P"';
-      ctx.fillStyle = 'white'
-      ctx.fillText('Level 2', this.x, this.y)
+      ctx.fillStyle = 'white';
+      ctx.fillText('Level 2', this.x, this.y);
     };
 
     if (state.current === state.gameLevelThree) {
@@ -591,6 +612,11 @@ const levelLabel = {
       ctx.fillText('Level 3', this.x, this.y)
     };
   },
+
+  resizeGame(){
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
+  }
 };
 
 
@@ -618,8 +644,21 @@ const winScreen = {
 
 
     }
+  },
+
+  resizeGame(){
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
+    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
+
+function resizeGame(){
+  startScreen.resizeGame();
+  gameOverScreen.resizeGame();
+  levelUpStartScreen.resizeGame();
+  winScreen.resizeGame();
+  levelLabel.resizeGame();
+}
 
 
 // Draw
@@ -657,6 +696,9 @@ window.onload = function () {
   loop();
   messageTxt.createRandomMessage();
   messageTxt.typing();
+  window.onresize = function(e) {
+    resizeGame()
+  }
 
 
   document.onkeydown = function (e) {
@@ -682,18 +724,6 @@ window.onload = function () {
       if (state.current == state.gameLevelOne || state.current == state.gameLevelTwo || state.current === state.gameLevelThree) {
         mainCharacter.moveLeft();
       }
-    };
-
-
-    // secret key to jump to level 2 (just for Demo purposes)
-    if (e.keyCode === 50) {
-      state.current = state.gameLevelTwo;
-      score.current = score.beginLevelTwo
-    };
-    // secret key to jump to level 3 (just for demo purposes)
-    if (e.keyCode === 51) {
-      state.current = state.gameLevelThree;
-      score.current = score.beginLevelThree;
     };
 
   }

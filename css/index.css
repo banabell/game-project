@@ -22,12 +22,13 @@ body {
   display: flex;
   align-items: center;
   border: 10px bold white;
-  /* position: fixed; */
+  
 }
 
 h1 {
   color: white;
   margin-bottom: 35px;
+  
 }
 .scoreBoard span {
   font-size: 20px;
@@ -53,23 +54,5 @@ button {
   margin-top: 20px;
 }
 
-/* #message::after{
-  position: absolute;
-  content: "";
-  width: 1px;
-  height: 25px;
-  border-right: 2px solid white;
-  right: -5px;
-  animation: blink 0.5s infinite ease;
-} 
-
- @keyframes blink {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-} */
 
 
