@@ -538,11 +538,6 @@ const startScreen = {
       ctx.drawImage(playButtonImg, this.x - this.w/2, this.y - this.h/2, this.w, this.h);
       // ctx.drawImage(speechBubbleImg, 100, 100, 100, 100);
     }
-  },
-
-  resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
-    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
 
@@ -558,32 +553,22 @@ const gameOverScreen = {
       ctx.font = '30px "Press Start 2P"';
       ctx.fillStyle = 'white'
       ctx.fillText('GAME OVER', this.x, this.y)
-      ctx.drawImage(retartButtonImg, canvas.width/2, canvas.height/2 + this.h, this.w, this.h)
+      ctx.drawImage(retartButtonImg, canvas.width/2 -this.w/2, canvas.height/2 + this.h, this.w, this.h)
     }
-  },
-
-  resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
-    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
 
 const levelUpStartScreen = {
   w: 250,
   h: 150,
-  x: 250,
-  y: 150,
+  x: canvas.width/2,
+  y: canvas.height/2,
 
 
   draw() {
     if (state.current === state.startLevelTwo || state.current === state.startLevelThree) {
-      ctx.drawImage(levelUpImg, this.x, this.y, this.w, this.h)
+      ctx.drawImage(levelUpImg, this.x - this.w/2, this.y - this.h/2, this.w, this.h)
     }
-  },
-
-  resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
-    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
 
@@ -611,11 +596,6 @@ const levelLabel = {
       ctx.fillStyle = 'white'
       ctx.fillText('Level 3', this.x, this.y)
     };
-  },
-
-  resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
-    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
 
@@ -644,21 +624,9 @@ const winScreen = {
 
 
     }
-  },
-
-  resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
-    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
 
-function resizeGame(){
-  startScreen.resizeGame();
-  gameOverScreen.resizeGame();
-  levelUpStartScreen.resizeGame();
-  winScreen.resizeGame();
-  levelLabel.resizeGame();
-}
 
 
 // Draw
@@ -696,9 +664,10 @@ window.onload = function () {
   loop();
   messageTxt.createRandomMessage();
   messageTxt.typing();
-  window.onresize = function(e) {
-    resizeGame()
-  }
+  // window.onresize = function(e) {
+  //   // resizeGame()
+  
+  // }
 
 
   document.onkeydown = function (e) {

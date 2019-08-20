@@ -2,57 +2,65 @@
 
 body {
   background-color: black;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   font-family: 'Press Start 2P';
 }
 
-.game {
+.header {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  align-items: space-around;
+  color: white;
 }
 
+.header h1 {
+  justify-self: center;
+}
 
 .scoreBoard  {
   color: white;
   text-align: center;
   font-family: 'Press Start 2P';
   display: flex;
-  align-items: center;
-  border: 10px bold white;
-  
-}
-
-h1 {
-  color: white;
-  margin-bottom: 35px;
-  
-}
-.scoreBoard span {
-  font-size: 20px;
-  margin-left: 35px;
-}
-.scoreBoard h2 {
-  font-size: 20px
-}
-
-#currentScore {
-  margin-right: 50px;
-}
-
-#message {
-  position: relative;
-  color: white;
-  font-family: 'Press Start 2P';
+  justify-content: space-around;
+  flex-wrap: wrap;
   font-size: 15px;
   
 }
 
-button {
-  margin-top: 20px;
+
+.user-score  {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
 }
+
+.best {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+}
+
+.canvas-game {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.message {
+  display: flex;
+  justify-content: center;
+
+  /* position: relative; */
+  color: white;
+  font-family: 'Press Start 2P';
+  font-size: 15px;
+}
+
+
+
+
+
+
 
 
 
