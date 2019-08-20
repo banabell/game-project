@@ -350,8 +350,8 @@ const mainCharacter = {
 
   reset() {
     this.speed = 0;
-    this.x = 150;
-    this.y = 160;
+    this.x = canvas.width/3;
+    this.y = 150;
   },
 };
 
@@ -549,16 +549,16 @@ const startScreen = {
 const gameOverScreen = {
   w: 70,
   h: 70,
-  x: 200,
-  y: 250,
+  x: canvas.width/3,
+  y: canvas.width/3,
 
 
   draw() {
     if (state.current == state.over) {
-      ctx.font = '35px "Press Start 2P"';
+      ctx.font = '30px "Press Start 2P"';
       ctx.fillStyle = 'white'
       ctx.fillText('GAME OVER', this.x, this.y)
-      ctx.drawImage(retartButtonImg, 330, 260, this.w, this.h)
+      ctx.drawImage(retartButtonImg, canvas.width/2, canvas.height/2 + this.h, this.w, this.h)
     }
   },
 
@@ -590,7 +590,7 @@ const levelUpStartScreen = {
 const levelLabel = {
   w: 100,
   h: 100,
-  x: 150,
+  x: canvas.width/3,
   y: 490,
 
   draw() {
