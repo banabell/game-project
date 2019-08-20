@@ -254,7 +254,7 @@ const mainCharacter = {
     { sX: 350, sY: 0 },
   ],
 
-  x: 150,
+  x: canvas.width/3,
   y: 150,
   w: 50,
   h: 70,
