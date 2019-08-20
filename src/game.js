@@ -254,10 +254,10 @@ const mainCharacter = {
     { sX: 350, sY: 0 },
   ],
 
-  x: canvas.width/6,
-  y: canvas.height/3,
-  w: canvas.width/10,
-  h: canvas.height/7,
+  x: 150,
+  y: 150,
+  w: 50,
+  h: 70,
 
   speed: 0,
   gravity: 0.0005,
@@ -276,7 +276,6 @@ const mainCharacter = {
       ctx.drawImage(mainCharacterImg, mainCharacter.sX, mainCharacter.sY, this.w, this.h, this.x, this.y, this.w, this.h)
     }
   },
-
 
   update() {
     // ANIMATE THE MAIN CHARACTER 
@@ -351,7 +350,7 @@ const mainCharacter = {
 
   reset() {
     this.speed = 0;
-    this.x = 50;
+    this.x = 150;
     this.y = 160;
   },
 };
@@ -378,11 +377,6 @@ const obstacle = {
       // DRAW BOTTOM OBSTACLE
       ctx.drawImage(obstacleImg, p.x, bottomYP, this.w, this.h)
     }
-  },
-
-  resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
-    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   },
 
   update() {
@@ -596,7 +590,7 @@ const levelUpStartScreen = {
 const levelLabel = {
   w: 100,
   h: 100,
-  x: 100,
+  x: 150,
   y: 490,
 
   draw() {
@@ -664,7 +658,6 @@ function resizeGame(){
   levelUpStartScreen.resizeGame();
   winScreen.resizeGame();
   levelLabel.resizeGame();
-  obstacle.resizeGame();
 }
 
 
@@ -735,4 +728,3 @@ window.onload = function () {
 
   }
 }
-
