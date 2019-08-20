@@ -254,10 +254,10 @@ const mainCharacter = {
     { sX: 350, sY: 0 },
   ],
 
-  x: 50,
-  y: 150,
-  w: 50,
-  h: 70,
+  x: canvas.width/6,
+  y: canvas.height/3,
+  w: canvas.width/10,
+  h: canvas.height/7,
 
   speed: 0,
   gravity: 0.0005,
@@ -277,10 +277,6 @@ const mainCharacter = {
     }
   },
 
-  resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
-    ctx.canvas.height = document.documentElement.clientHeight * 0.5;
-  },
 
   update() {
     // ANIMATE THE MAIN CHARACTER 
@@ -573,7 +569,7 @@ const gameOverScreen = {
   },
 
   resizeGame(){
-    ctx.canvas.width = document.documentElement.clientWidth;
+    ctx.canvas.width = document.documentElement.clientWidth * 0.5;
     ctx.canvas.height = document.documentElement.clientHeight * 0.5;
   }
 };
@@ -669,7 +665,6 @@ function resizeGame(){
   winScreen.resizeGame();
   levelLabel.resizeGame();
   obstacle.resizeGame();
-  mainCharacter.resizeGame();
 }
 
 
